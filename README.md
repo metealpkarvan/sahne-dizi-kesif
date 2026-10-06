@@ -1,6 +1,6 @@
 # Sahne — Hikâyenin içine gir
 
-Türkçe dizi keşfi ve kişisel izleme günlüğü. Canlı sürüm: https://sahne-dizi-kesif.metealp.chatgpt.site/
+Türkçe dizi keşfi ve kişisel izleme günlüğü. Canlı sürüm: https://sahne-dizi-kesif.vercel.app/
 
 ## Deneyim
 
@@ -32,7 +32,7 @@ http://localhost:4181 adresini açın. Canlı katalog araması, bölüm takvimi 
 
 Vercel proje adı: `sahne-dizi-kesif`. Framework ayarı Other; build komutu `npm run build`, yayın klasörü `dist`. Yapılandırma `vercel.json` dosyasında bulunur. `scripts/build.mjs` yalnızca uygulama dosyalarını, görselleri ve katalog verilerini paketler; testler, depo belgeleri ve yerel Vercel ayarları yayın paketine girmez.
 
-GitHub `main` dalı Vercel projesine bağlandığında bu dala yapılan güncellemeler üretim sürümünü otomatik yayımlar. Vercel bağlantı bilgileri `.vercel/` içinde yerel kalır ve GitHub’a eklenmez.
+GitHub `main` dalı Vercel projesine bağlıdır; bu dala yapılan güncellemeler üretim sürümünü otomatik yayımlar. Vercel bağlantı bilgileri `.vercel/` içinde yerel kalır ve GitHub’a eklenmez.
 
 ## Verilerin anlamı ve güncellik
 
