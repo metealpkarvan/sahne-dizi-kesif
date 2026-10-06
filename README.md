@@ -1,29 +1,33 @@
-# Sahne — Dizi keşif ve izleme günlüğü
+# Sahne — Hikâyenin içine gir
 
-Sahne, yeni diziler keşfetmek, beğenilere göre öneriler almak ve izleme listenizi düzenlemek için hazırlanmış Türkçe bir dizi keşif arayüzüdür.
+Türkçe dizi keşfi ve kişisel izleme günlüğü. Canlı sürüm: https://sahne-dizi-kesif.metealp.chatgpt.site/
 
-Canlı sürüm: https://sahne-dizi-kesif.metealp.chatgpt.site/
+## Deneyim
 
-## Özellikler
-
-- Popüler, yeni ve yüksek puanlı diziler için görsel keşif rafları
-- TVmaze kataloğunda dizi arama ve başlık detayları
-- Beğeni sinyallerine göre kişiselleştirilmiş öneriler
-- Daha sonra izlemek üzere kaydetme ve kişisel dizi listeleri
-- Ülkeye göre izleme seçenekleri ve JustWatch arama bağlantıları
-- Sezon, bölüm, oyuncu ve dizi bilgileri
-- Mobil uyumlu arayüz ve tarayıcı geri hareketi desteği
+- Dört değiştirilebilir ana sahne, karakter fotoğrafları ve doğal kaydırmayla ilerleyen üç tam ekran hikâye.
+- Apple TV+, HBO Max, Netflix ve Disney+ için 15'er dizilik, toplam 60 benzersiz başlık içeren platform seçkileri. Başlık araması, tür filtresi ve sıralama.
+- TVmaze'in geniş kataloğunda arama; popüler, yeni ve yüksek puanlı dizi rafları.
+- Beğendim, çok beğendim ve beğenmedim sinyalleriyle kişisel öneriler.
+- Sonra izle, izleme durumları, özel listeler, yıldız puanları, notlar ve bölüm takibi.
+- Ülkeye göre doğrulanmış izleme kayıtları; kaydı bulunmayan başlıklarda ülkenin JustWatch kataloğuna arama bağlantısı.
+- Mobil düzen, tarayıcı geçmişiyle geri dönüş ve azaltılmış hareket tercihine uyum.
 
 ## Yerel çalıştırma
 
-Bu depo, sitenin statik dağıtım dosyalarını içerir; ayrıca paket kurulumu veya derleme adımı gerekmez. Python kuruluysa depo klasöründe şu komutla yerel sunucu başlatabilirsiniz:
+Statik HTML, CSS ve JavaScript. Paket kurulumu veya derleme adımı gerekmez.
 
 ```sh
-python3 -m http.server 4173
+python3 -m http.server 4181
 ```
 
-Ardından `http://localhost:4173` adresini açın. Bazı katalog ve izleme bilgileri internet bağlantısı gerektirir.
+http://localhost:4181 adresini açın. Canlı katalog araması ve ek dizi ayrıntıları için internet bağlantısı gerekir.
 
-## Veri ve medya
+## Verilerin anlamı
 
-Dizi kataloğu TVmaze verilerinden yararlanır. İzleme seçenekleri ve görseller ilgili servislerin kaynaklarına bağlıdır; güncellik ve kullanılabilirlik ülkeye göre değişebilir. Dizi görsellerinin ve marka adlarının hakları ilgili sahiplerine aittir.
+Platform seçkileri özgün yayıncı ve stüdyo bağlantısını gösterir; seçilen ülkede abonelikle erişim garantisi değildir. Yıl ilk yayın yılı, puan TVmaze kullanıcı ortalamasıdır. İzleme kayıtlarının kontrol tarihi dizi ayrıntısında gösterilir. Yeni prömiyer rafı sayfa açıldığında kontrol edilir ve altı saatlik tarayıcı önbelleği kullanır; popülerlik ve puan raflarının kaynak tarihi ayrıca görünür.
+
+Arşiv ve beğeniler bu cihazın tarayıcısında saklanır. Hesap veya cihazlar arasında eşitleme yoktur. Arşiv, uygulamadaki indirme düğmesiyle dışa aktarılabilir.
+
+## Görseller ve kaynaklar
+
+Dizi bilgileri TVmaze, izleme seçenekleri JustWatch kaynaklıdır. Yerel tanıtım fotoğraflarının kaynakları ve kredileri `image-sources.json` içinde kayıtlıdır. Görseller ve marka adları ilgili hak sahiplerine aittir; bu kayıtlar açık lisans anlamına gelmez.
