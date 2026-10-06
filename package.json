@@ -1,0 +1,13 @@
+{
+  "name": "sahne-dizi-kesif",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sahne dizi keşfi ve kişisel izleme günlüğü",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node tests/recommendations.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

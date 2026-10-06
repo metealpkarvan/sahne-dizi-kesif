@@ -18,14 +18,21 @@ Türkçe dizi keşfi ve kişisel izleme günlüğü. Canlı sürüm: https://sah
 
 ## Yerel çalıştırma ve doğrulama
 
-Statik HTML, CSS ve JavaScript. Paket kurulumu veya derleme adımı gerekmez.
+Statik HTML, CSS ve JavaScript. Uygulamada harici Node bağımlılığı yoktur; Vercel için yayın dosyaları `dist/` klasörüne hazırlanır.
 
 ```sh
 python3 -m http.server 4181 --directory .
-node tests/recommendations.cjs
+npm run build
+npm test
 ```
 
 http://localhost:4181 adresini açın. Canlı katalog araması, bölüm takvimi ve ek dizi ayrıntıları için internet bağlantısı gerekir. Regresyon testi gerçek başlangıç kataloğuyla beğeni etkisini, güçlü tercihi, tüm arşiv durumlarını, yıldız/favori sinyallerini ve deterministik sonuçları denetler.
+
+## Vercel yayını
+
+Vercel proje adı: `sahne-dizi-kesif`. Framework ayarı Other; build komutu `npm run build`, yayın klasörü `dist`. Yapılandırma `vercel.json` dosyasında bulunur. `scripts/build.mjs` yalnızca uygulama dosyalarını, görselleri ve katalog verilerini paketler; testler, depo belgeleri ve yerel Vercel ayarları yayın paketine girmez.
+
+GitHub `main` dalı Vercel projesine bağlandığında bu dala yapılan güncellemeler üretim sürümünü otomatik yayımlar. Vercel bağlantı bilgileri `.vercel/` içinde yerel kalır ve GitHub’a eklenmez.
 
 ## Verilerin anlamı ve güncellik
 
