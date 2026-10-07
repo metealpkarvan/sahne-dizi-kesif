@@ -16,6 +16,7 @@ function renderPlatformWorlds() {
   root.innerHTML=PLATFORM_DATA.platforms.map((p,i)=>'<button class="platform-world platform-world-'+esc(p.key)+'" data-platform="'+esc(p.key)+'" aria-label="'+esc(p.name)+' dizi seçkisini aç"><img src="'+esc(p.scene)+'" alt="" loading="lazy" width="700" height="900"><span class="world-index">0'+(i+1)+'</span><span class="world-copy">'+platformBrand(p.key,p.name)+'<span>'+esc(p.tagline)+'</span><small>'+platformShows(p.key).length.toLocaleString('tr-TR')+' dizi</small><span class="world-enter">Seçkiyi aç</span></span></button>').join('');
 }
 function renderCinemaHero() {
+  if(!$('#cinema-hero'))return;
   $('#hero-media').innerHTML=cinemaStories.map((story,i)=>'<img class="hero-image '+(!i?'active':'')+'" src="'+story.image+'" alt="'+esc(story.name+' — '+story.character)+'" '+(!i?'fetchpriority="high"':'loading="lazy"')+' width="2200" height="1468" style="object-position:'+story.position+'">').join('');
   $('#hero-story-switch').innerHTML=cinemaStories.map((s,i)=>'<button data-hero-story="'+i+'" class="'+(!i?'active':'')+'" aria-label="'+esc(s.name)+' sahnesine geç" aria-pressed="'+(!i)+'"><img src="'+s.image+'" alt="" width="72" height="48"><span><small>0'+(i+1)+'</small>'+esc(s.name)+'</span></button>').join('');
   setHeroStory(0);
@@ -38,11 +39,13 @@ function refreshHomeArchiveButtons() {
   const total=$('#catalog-total');if(total)total.textContent=CATALOG_BOOTSTRAP.seriesTotal.toLocaleString('tr-TR');
 }
 function renderStoryScroll() {
+  if(!$('#story-scroll'))return;
   const stories=cinemaStories.slice(1);
   $('#story-chapter-controls').innerHTML=stories.map((s,i)=>'<button data-story-chapter="'+i+'" aria-label="'+esc(s.name)+' kaydırma bölümüne git" class="'+(!i?'active':'')+'">0'+(i+1)+' <span>'+esc(s.name)+'</span></button>').join('');
   $('#story-scenes').innerHTML=stories.map((s,i)=>'<article class="story-scene '+(!i?'active':'')+(s.right?' story-copy-right':'')+'" aria-hidden="'+(motionPreference.matches?'false':String(!!i))+'" '+(!motionPreference.matches&&i?'inert':'')+'><img class="story-scene-image" src="'+s.image+'" alt="'+esc(s.name+' — '+s.character)+'" loading="lazy" width="2200" height="1468" style="object-position:'+s.position+'"><div class="story-scene-shade"></div><div class="story-scene-copy"><span class="eyebrow">'+esc(s.platform.toLocaleUpperCase('tr'))+' / '+esc(s.name.toLocaleUpperCase('tr'))+'</span><h2>'+s.headline+'</h2><p>'+esc(s.text)+'</p><div class="story-scene-actions"><button class="cinema-button light" data-detail="'+s.id+'">Hikâyeyi keşfet</button><button class="cinema-button glass" data-home-save="'+s.id+'">＋ Sonra izle</button></div></div><span class="story-character">'+esc(s.character)+'<small>'+esc(s.name)+'</small></span></article>').join('');
 }
 function renderCharacterCards() {
+  if(!$('#character-cards'))return;
   const definitions=[['Silo','Juliette Nichols','silo','68% 40%'],['The Bear','Carmy Berzatto','bear','55% 35%'],['Wednesday','Wednesday Addams','wednesday','50% 40%'],['Andor','Cassian Andor','andor','50% 40%']];
   $('#character-cards').innerHTML=definitions.map(([title,character,image,position])=>{const s=tasteCatalog().find(show=>show.name===title);return s?'<button class="character-card" data-detail="'+s.id+'" aria-label="'+esc(character+' — '+title)+' ayrıntıları"><img src="assets/'+image+'.jpg" alt="'+esc(character)+'" loading="lazy" width="700" height="1000" style="object-position:'+position+'"><span class="character-copy"><small>'+esc(title)+'</small><strong>'+esc(character)+'</strong><span>Hikâyesini keşfet</span></span></button>':'';}).join('');
 }
@@ -70,7 +73,7 @@ function scheduleCinemaFrame() {if(!cinemaFrame)cinemaFrame=requestAnimationFram
 function updateCinemaScroll() {
   cinemaFrame=0;const reduced=motionPreference.matches;
   document.body.classList.toggle('motion-reduced',reduced);$('.header').classList.toggle('header-scrolled',window.scrollY>30||state.view!=='discover');
-  if(state.view!=='discover')return;
+  if(state.view!=='discover'||!$('#cinema-hero'))return;
   const hero=$('#cinema-hero'),heroRect=hero.getBoundingClientRect(),heroTravel=Math.max(0,-heroRect.top);
   if(heroRect.bottom>0&&!reduced){
     $('#hero-media').style.transform='translate3d(0,'+(heroTravel*.26)+'px,0)';
@@ -99,5 +102,13 @@ function renderHomeExperience() {
   document.addEventListener('change',event=>{if(event.target.id==='platform-genre'){state.platformGenre=event.target.value;renderPlatformCatalog();}if(event.target.id==='platform-sort')renderPlatformCatalog();});
   window.addEventListener('scroll',scheduleCinemaFrame,{passive:true});window.addEventListener('resize',scheduleCinemaFrame,{passive:true});motionPreference.addEventListener('change',scheduleCinemaFrame);
   if('IntersectionObserver' in window&&!motionPreference.matches){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}}),{threshold:.06});document.documentElement.classList.add('cinema-motion');$$('.reveal').forEach(node=>observer.observe(node));}
+  document.addEventListener('click',event=>{const button=event.target.closest('[data-home-shelf]');if(button)selectHomeShelf(button.dataset.homeShelf);});
+  document.addEventListener('keydown',event=>{const button=event.target.closest('[data-home-shelf]');if(!button||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const buttons=$$('[data-home-shelf]'),index=buttons.indexOf(button),next=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;selectHomeShelf(buttons[next].dataset.homeShelf);buttons[next].focus();});
   scheduleCinemaFrame();
+}
+function selectHomeShelf(key){
+  const button=$(`[data-home-shelf="${key}"]`);if(!button)return;
+  $$('[data-home-shelf]').forEach(node=>{node.setAttribute('aria-selected',String(node===button));node.tabIndex=node===button?0:-1;});
+  $$('[data-home-panel]').forEach(node=>node.hidden=node.dataset.homePanel!==key);
+  if(key==='running'){liveShelf='running';renderLiveShelf();}
 }

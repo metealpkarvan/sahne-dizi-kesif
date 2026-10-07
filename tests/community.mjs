@@ -303,6 +303,35 @@ try {
     await anonymous.get('avatar', { id: `not-a-user-${runId}` }, { expect: [404] });
   });
 
+  await test('Cover photos persist independently, serve public bytes, validate and remove only the owner cover', async () => {
+    const bytes = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64');
+    const before = await a.get('me');
+    const uploaded = await a.post('updateProfile', { coverImage: `data:image/png;base64,${bytes.toString('base64')}` });
+    assert.equal(uploaded.user.image, before.user.image);
+    const coverURL = new URL(uploaded.user.coverImage, base);
+    assert.equal(coverURL.searchParams.get('action'), 'cover');
+    assert.equal(coverURL.searchParams.get('id'), actors[0].id);
+    const response = await fetch(coverURL, { signal: AbortSignal.timeout(25_000) });
+    assert.equal(response.status, 200); assert.equal(response.headers.get('content-type'), 'image/png');
+    assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+    assert.deepEqual(Buffer.from(await response.arrayBuffer()), bytes);
+    const cached = await fetch(coverURL, { headers: {'If-None-Match':response.headers.get('etag')}, signal: AbortSignal.timeout(25_000) });
+    assert.equal(cached.status, 304);
+    const visible = await anonymous.get('profile', { username: actors[0].username });
+    assert.equal(visible.user.coverImage, uploaded.user.coverImage); assertPublic(visible);
+    await a.post('updateProfile', { bio: 'A cover that survives editing other fields.' });
+    assert.equal((await a.get('me')).user.coverImage, uploaded.user.coverImage);
+    await b.post('updateProfile', { coverImage: null });
+    assert.equal((await a.get('me')).user.coverImage, uploaded.user.coverImage);
+    const oversized = Buffer.alloc(500001); bytes.copy(oversized);
+    for (const coverImage of [`data:image/png;base64,${oversized.toString('base64')}`, 'javascript:alert(1)', 'data:image/svg+xml;base64,PHN2Zz4=', 'data:image/png;base64,YWJjZGVmZ2hpamts']) await a.post('updateProfile', {coverImage}, {expect:[400]});
+    await anonymous.post('updateProfile', { coverImage: null }, {expect:[401]});
+    assert.equal((await a.get('me')).user.coverImage, uploaded.user.coverImage);
+    const removed = await a.post('updateProfile', { coverImage: null });
+    assert.equal(removed.user.coverImage, null); assert.equal(removed.user.image, before.user.image);
+    await anonymous.get('cover', {id:actors[0].id}, {expect:[404]});
+  });
+
   await test('General topics and replies support a null show without weakening ownership', async () => {
     const created = await a.post('createTopic', { title: `QA general ${runId}`, body: 'A general discussion without a show.', category: 'question', spoiler: false });
     assert.equal(created.item.show, null);

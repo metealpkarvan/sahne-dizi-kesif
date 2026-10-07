@@ -1,7 +1,7 @@
 import { randomUUID, createHash } from 'node:crypto';
 import { auth, trustedOrigins } from './auth.js';
 import { query, transaction } from './db.js';
-import { ApiError, avatarSchema, parseMutation, pageOptions, numericShowId } from './validation.js';
+import { ApiError, avatarSchema, coverSchema, parseMutation, pageOptions, numericShowId } from './validation.js';
 import { ensureShow, lockLibrary, bumpLibrary, getLibrary, syncLibrary, setRating, ratingSummary } from './library.js';
 
 const database = {query};
@@ -12,15 +12,24 @@ const publicAvatar = row => {
   const version=createHash('sha256').update(row.image).digest('hex').slice(0,16);
   return `/api/community?action=avatar&id=${encodeURIComponent(row.user_id||row.id)}&v=${version}`;
 };
+const publicCover = row => {
+  const value=row.cover_image;
+  if(!coverSchema.safeParse(value).success)return null;
+  if(!value?.startsWith('data:'))return value;
+  const version=createHash('sha256').update(value).digest('hex').slice(0,16);
+  return `/api/community?action=cover&id=${encodeURIComponent(row.user_id||row.id)}&v=${version}`;
+};
 const publicUser = row => ({
   id:row.user_id || row.id,
   username:row.username || null,
   name:String(row.name || '').slice(0,100),
   image:publicAvatar(row),
+  coverImage:publicCover(row),
   bio:row.bio || '',
   createdAt:row.user_created_at || row.createdAt,
 });
 const userColumns = `u.id AS user_id,u.username,u.name,u.image,u."createdAt" AS user_created_at,COALESCE(pr.bio,'') AS bio`;
+const profileColumns = `${userColumns},pr.cover_image`;
 const postSelect = `SELECT p.*,${userColumns},s.snapshot AS show,
   (SELECT count(*)::integer FROM sahne_likes WHERE post_id=p.id) AS like_count,
   (SELECT count(*)::integer FROM sahne_posts r WHERE r.topic_id=p.id AND r.deleted_at IS NULL) AS reply_count,
@@ -52,7 +61,7 @@ async function listPosts(client,viewerId,params,filters=[]) {
   return {items:visible.map(row=>postDto(row,viewerId)),nextCursor:rows.length>limit ? Buffer.from(JSON.stringify({at:last.created_at,id:last.id})).toString('base64url') : null};
 }
 async function getUser(client,usernameValue) {
-  const {rows} = await client.query(`SELECT ${userColumns} FROM "user" u LEFT JOIN sahne_profiles pr ON pr.user_id=u.id WHERE lower(u.username)=lower($1)`,[usernameValue]);
+  const {rows} = await client.query(`SELECT ${profileColumns} FROM "user" u LEFT JOIN sahne_profiles pr ON pr.user_id=u.id WHERE lower(u.username)=lower($1)`,[usernameValue]);
   if (!rows.length) throw new ApiError(404,'NOT_FOUND','Bu kullanıcı bulunamadı.');
   return publicUser(rows[0]);
 }
@@ -119,9 +128,10 @@ async function mutate(client,userId,action,data) {
     case 'updateProfile': {
       await client.query('INSERT INTO sahne_profiles(user_id) VALUES($1) ON CONFLICT DO NOTHING',[userId]);
       if(data.bio!==undefined)await client.query('UPDATE sahne_profiles SET bio=$2,updated_at=now() WHERE user_id=$1',[userId,data.bio]);
+      if(data.coverImage!==undefined)await client.query('UPDATE sahne_profiles SET cover_image=$2,updated_at=now() WHERE user_id=$1',[userId,data.coverImage]);
       if(data.name!==undefined)await client.query('UPDATE "user" SET name=$2,"updatedAt"=now() WHERE id=$1',[userId,data.name]);
       if(data.image!==undefined)await client.query('UPDATE "user" SET image=$2,"updatedAt"=now() WHERE id=$1',[userId,data.image]);
-      const {rows}=await client.query(`SELECT ${userColumns} FROM "user" u LEFT JOIN sahne_profiles pr ON pr.user_id=u.id WHERE u.id=$1`,[userId]);
+      const {rows}=await client.query(`SELECT ${profileColumns} FROM "user" u LEFT JOIN sahne_profiles pr ON pr.user_id=u.id WHERE u.id=$1`,[userId]);
       return {user:publicUser(rows[0])};
     }
     case 'librarySync':return syncLibrary(client,userId,data);
@@ -196,7 +206,7 @@ async function readAction(request,userId) {
   switch(action) {
     case 'me': {
       if(!userId)return {user:null};
-      const {rows}=await query(`SELECT ${userColumns} FROM "user" u LEFT JOIN sahne_profiles pr ON pr.user_id=u.id WHERE u.id=$1`,[userId]);
+      const {rows}=await query(`SELECT ${profileColumns} FROM "user" u LEFT JOIN sahne_profiles pr ON pr.user_id=u.id WHERE u.id=$1`,[userId]);
       return {user:rows.length?publicUser(rows[0]):null};
     }
     case 'profile': {
@@ -245,12 +255,13 @@ async function readJson(request) {
   while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.length;if(bytes>maximum){await reader.cancel();throw new ApiError(413,'TOO_LARGE','Arşiv isteği çok büyük.');}chunks.push(Buffer.from(value));}
   try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new ApiError(400,'INVALID_JSON','İstek gövdesi geçerli JSON olmalı.');}
 }
-async function avatarResponse(request) {
+async function profileImageResponse(request) {
   const params=new URL(request.url).searchParams,id=params.get('id');
   if(!id||id.length>128)throw new ApiError(400,'INVALID_INPUT','Görsel kimliği geçersiz.');
-  const {rows}=await query('SELECT image FROM "user" WHERE id=$1',[id]);
+  const isCover=params.get('action')==='cover';
+  const {rows}=await query(isCover?'SELECT cover_image AS image FROM sahne_profiles WHERE user_id=$1':'SELECT image FROM "user" WHERE id=$1',[id]);
   const value=rows[0]?.image;
-  if(!value?.startsWith('data:')||!avatarSchema.safeParse(value).success)throw new ApiError(404,'NOT_FOUND','Bu görsel bulunamadı.');
+  if(!value?.startsWith('data:')||!(isCover?coverSchema:avatarSchema).safeParse(value).success)throw new ApiError(404,'NOT_FOUND','Bu görsel bulunamadı.');
   const match=/^data:(image\/(?:png|jpeg|webp));base64,(.*)$/.exec(value);
   const etag=`"${createHash('sha256').update(value).digest('hex').slice(0,16)}"`;
   const headers={'Content-Type':match[1],'Cache-Control':'public, max-age=300','X-Content-Type-Options':'nosniff',ETag:etag};
@@ -260,7 +271,7 @@ async function avatarResponse(request) {
 export async function communityHandler(request) {
   try {
     if(!['GET','POST'].includes(request.method))return json({error:{code:'METHOD_NOT_ALLOWED',message:'Bu yöntem desteklenmiyor.'}},405);
-    if(request.method==='GET'&&new URL(request.url).searchParams.get('action')==='avatar')return await avatarResponse(request);
+    if(request.method==='GET'&&['avatar','cover'].includes(new URL(request.url).searchParams.get('action')))return await profileImageResponse(request);
     if(request.method==='POST') {
       const origin=request.headers.get('origin');
       if(!origin||!trustedOrigins.includes(origin)||request.headers.get('sec-fetch-site')==='cross-site')throw new ApiError(403,'INVALID_ORIGIN','Bu kaynaktan işlem yapılamaz.');

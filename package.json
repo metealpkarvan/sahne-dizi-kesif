@@ -11,7 +11,8 @@
     "test:community": "node --env-file=.env.local tests/community.mjs",
     "test:watch": "node --test tests/watch.mjs tests/watch-ui.mjs",
     "test:media": "node --test tests/media.mjs tests/media-ui.mjs tests/trailer-preview.mjs",
-    "test:navigation": "node --test tests/navigation.mjs tests/legacy-site.mjs"
+    "test:navigation": "node --test tests/navigation.mjs tests/legacy-site.mjs",
+    "test:photos": "node --test tests/profile-images.mjs"
   },
   "engines": {
     "node": "24.x"

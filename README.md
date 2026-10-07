@@ -4,7 +4,7 @@ Türkçe dizi keşfi, sosyal izleme günlüğü ve dizi topluluğu. Canlı sür�
 
 ## Deneyim
 
-- Sinematik ana sahneler, karakter fotoğrafları, paralaks ve doğal kaydırmayla ilerleyen tam ekran hikâyeler.
+- Kısa sosyal ana sayfa: görselli açılış, tek rafta popüler/yeni/yüksek puanlı/devam eden diziler, kişisel öneriler ve son forum sohbetleri.
 - TVmaze’in 6 Ekim 2026 tarihli **90.394 kayıtlık tam indeksi**. Varsayılan dizi/animasyon görünümünde 51.643 başlık; arama gerektirmeden 48’er kartlık sayfalarla gezilebilir.
 - Popülerler, klasikler, yüksek puanlılar, yeni başlayanlar, devam edenler ve yakında rafları; platform, tür, dil, yayın durumu ve yapım türü filtreleri.
 - Apple TV+, HBO Max, Netflix ve Disney+/FX/Hulu aileleri için geniş katalog; 175 başlık için ayrıca resmî kaynaklarla desteklenen yapım kökeni ve Türkçe editoryal açıklama.
@@ -12,7 +12,7 @@ Türkçe dizi keşfi, sosyal izleme günlüğü ve dizi topluluğu. Canlı sür�
 - Beğendim / çok beğendim / beğenmedim sinyallerine göre değişen öneriler. Tür, konu, atmosfer, süre, dil ve yıl benzerliği kullanılır. Çok beğenme daha güçlüdür; olumsuz tercihler benzer dizileri geriye iter.
 - Katalog ve platform sayfalarında hemen güncellenen öneri afişleri; öneri kartlarında hangi tercihin etkili olduğunu gösteren açıklama. Arama filtreleri kişisel öneri havuzunu daraltmaz.
 - Arşivdeki ve değerlendirilmiş diziler yeniden önerilmez. Favoriler ve 7+ / 4 ve altı puanlar, açık bir beğeni verilmemişse önerileri etkiler. Kişisel notlar kullanılmaz.
-- Better Auth ile e-posta/şifre hesabı; herkese açık profil, kırpılabilir profil fotoğrafı, biyografi ve takip.
+- Better Auth ile e-posta/şifre hesabı; herkese açık profil, bağımsız değiştirilebilir kapak ve profil fotoğrafı, biyografi ve takip. 25 MB’a kadar JPG/PNG/WebP dosyaları kırpılır ve otomatik sıkıştırılır; sunucu avatar için 250 KB, kapak için 500 KB sınırını doğrular.
 - Diziye ve kategoriye bağlı forum konuları, yanıtlar, yorumlar, spoiler perdesi, beğeniler ve içerik bildirme.
 - Herkese açık izleme kayıtları ve profilde izlenen diziler; özel günlük notları ayrı tutulur.
 - Neon Postgres üzerinde kalıcı hesap arşivi, tercihler, listeler ve 10 üzerinden yarım puan adımları.
@@ -43,6 +43,7 @@ npm run test:watch
 npm run test:media
 npm run test:community
 npm run test:navigation
+npm run test:photos
 ```
 
 Son komut yerel API ve gerçek veritabanında iki geçici test hesabıyla oturum, yetki, özel veri, forum, puan, takip ve hesap arşivi akışlarını denetler; oluşturduğu hesapları sonunda temizler. Canlı katalog araması ve ek dizi ayrıntıları için internet bağlantısı gerekir.

@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS sahne_profiles (
   library_version integer NOT NULL DEFAULT 0,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+ALTER TABLE sahne_profiles ADD COLUMN IF NOT EXISTS cover_image text;
 CREATE TABLE IF NOT EXISTS sahne_shows (
   show_id integer PRIMARY KEY CHECK (show_id > 0),
   snapshot jsonb NOT NULL,

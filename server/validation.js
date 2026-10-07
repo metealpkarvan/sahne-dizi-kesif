@@ -16,18 +16,19 @@ const safeImage = value => {
   try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password; } catch { return false; }
 };
 export const imageSchema = z.string().refine(safeImage, 'Geçerli bir HTTPS görseli veya yerel dosya yolu seç.').nullable();
-const safeAvatar = value => {
+const safeProfileImage = (value, maximum) => {
   if (safeImage(value)) return true;
-  if (typeof value !== 'string' || value.length > 350000) return false;
+  if (typeof value !== 'string' || value.length > Math.ceil(maximum / 3) * 4 + 50) return false;
   const match = /^data:image\/(png|jpeg|webp);base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
   if (!match || match[2].length % 4 !== 0) return false;
   const bytes = Buffer.from(match[2], 'base64');
-  if (bytes.length > 250000 || bytes.length < 12 || bytes.toString('base64') !== match[2]) return false;
+  if (bytes.length > maximum || bytes.length < 12 || bytes.toString('base64') !== match[2]) return false;
   if (match[1] === 'png') return bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]));
   if (match[1] === 'jpeg') return bytes[0]===255 && bytes[1]===216 && bytes[2]===255 && bytes.at(-2)===255 && bytes.at(-1)===217;
   return bytes.toString('ascii',0,4)==='RIFF' && bytes.toString('ascii',8,12)==='WEBP' && bytes.readUInt32LE(4)===bytes.length-8;
 };
-export const avatarSchema = z.string().refine(safeAvatar,'PNG, JPEG veya WebP görseli seç (en fazla 250 KB).').nullable();
+export const avatarSchema = z.string().refine(value=>safeProfileImage(value,250000),'PNG, JPEG veya WebP görseli seç (en fazla 250 KB).').nullable();
+export const coverSchema = z.string().refine(value=>safeProfileImage(value,500000),'Geçerli bir kapak fotoğrafı seç.').nullable();
 export const showSchema = z.object({
   id: showIdSchema,
   name: z.string().trim().min(1).max(180),
@@ -64,7 +65,7 @@ const body = z.string().trim().min(1).max(5000);
 const spoiler = z.boolean().optional().default(false);
 const uuid = z.uuid();
 const schemas = {
-  updateProfile: z.object({name:z.string().trim().min(1).max(100).optional(),bio:z.string().trim().max(500).optional(),image:avatarSchema.optional()}).strict(),
+  updateProfile: z.object({name:z.string().trim().min(1).max(100).optional(),bio:z.string().trim().max(500).optional(),image:avatarSchema.optional(),coverImage:coverSchema.optional()}).strict(),
   follow: z.object({username:z.string().min(3).max(30),following:z.boolean()}).strict(),
   log: z.object({...showFields,watchedAt:dateSchema.optional(),body:z.string().trim().max(5000).optional().default(''),spoiler,rating:ratingSchema.optional()}).strict(),
   librarySync: librarySnapshotSchema,

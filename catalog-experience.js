@@ -126,7 +126,7 @@ function renderPlatformBrowse(){
 }
 function renderCuratedCollections(){
   const pool=browseRows().filter(s=>(!s.type||['Scripted','Animation'].includes(s.type))),html=curatedCollections.map((c,i)=>{const list=sortBrowse(pool.filter(s=>collectionMatches(s,c)),'popular');if(!list.length)return '';const lead=materializeCatalogShow(list.find(s=>s.image?.medium&&s.image.medium!==noPoster)||list[0]),image=c.image||lead.image.original||lead.image.medium;return '<button class="curated-card" data-curated="'+c.key+'" aria-label="'+esc(c.title)+' seçkisini aç"><img src="'+esc(image)+'" alt="" loading="lazy"><span class="curated-card-copy"><small>SEÇKİ '+String(i+1).padStart(2,'0')+'</small><strong>'+esc(c.title)+'</strong><span>'+esc(c.description)+'</span><small>'+list.length.toLocaleString('tr-TR')+' dizi</small></span></button>';}).join('');
-  $('#curated-collections').innerHTML=html;$('#all-collections').innerHTML=html;
+  if($('#curated-collections'))$('#curated-collections').innerHTML=html;$('#all-collections').innerHTML=html;
 }
 function refreshCatalogHomeShelves(){
   const rows=recommendationCandidates();homeRankings.popular=sortBrowse([...rows],'popular').slice(0,18);homeRankings.rated=sortBrowse(rows.filter(s=>s.rating>=7.5&&(s.weight||0)>=85),'rated').slice(0,18);homeRankings.newest=sortBrowse(rows.filter(s=>s.productionPlatforms?.length&&s.premiered&&s.premiered<=localDate()&&s.premiered>=localDate(-730)),'new').slice(0,18);renderHomeRankings();$('#ranking-updated').textContent='Katalog verisi · '+fmtDate(CATALOG_BOOTSTRAP.checkedAt.slice(0,10));$('#newest-status').textContent='Platform yapımları · ilk yayın tarihine göre · '+fmtDate(CATALOG_BOOTSTRAP.checkedAt.slice(0,10));renderLiveShelf();
