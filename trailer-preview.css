@@ -9,3 +9,6 @@
 .trailer-preview button:focus-visible,.trailer-preview a:focus-visible{outline:2px solid #d7fa5b;outline-offset:4px}
 @keyframes preview-enter{from{opacity:0;transform:scale(.97) translateY(5px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.trailer-preview{animation:none}.trailer-preview-player{transition:none}}
+
+.trailer-preview-source[hidden]{display:none}.trailer-preview-sound:disabled{opacity:.4;cursor:default}.trailer-preview-loading{display:none;position:absolute;left:calc(50% - 15px);top:calc(50% - 15px);width:30px;height:30px;border:2px solid #ffffff38;border-top-color:#d7fa5b;border-radius:50%;animation:preview-spin .8s linear infinite;box-shadow:0 0 24px #0009}.preview-loading .trailer-preview-loading{display:block}.preview-loading .trailer-preview-cover{filter:brightness(.65)}
+@keyframes preview-spin{to{transform:rotate(360deg)}}

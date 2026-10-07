@@ -56,7 +56,7 @@
   }
 
   function rank(type) {
-    return /backdrop|background|banner/.test(type) ? 0 : /poster|cover/.test(type) ? 2 : 1;
+    return type === 'episode' ? 0 : /poster|cover/.test(type) ? 2 : 1;
   }
 
   function trailer(record) {

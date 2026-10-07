@@ -1,7 +1,7 @@
 import {query} from './db.js';
 import {fetchMedia,MediaError,validShowId} from './media-core.js';
 
-const memory=new Map(),inflight=new Map(),VERSION=2;
+const memory=new Map(),inflight=new Map(),VERSION=3;
 const age=record=>Date.now()-new Date(record.checkedAt).getTime();
 const ttl=record=>record.state==='partial'?15*60*1000:record.trailer?12*60*60*1000:60*60*1000;
 const valid=(record,id)=>record?.show?.id===id&&['ready','partial'].includes(record.state)&&Array.isArray(record.images)&&
@@ -36,7 +36,9 @@ export async function getMedia(id){
 }
 
 export async function mediaHandler(request){
-  const headers={'Cache-Control':'public, max-age=60, s-maxage=300','X-Content-Type-Options':'nosniff'};
+  const headers={'Cache-Control':'public, max-age=60, s-maxage=300','X-Content-Type-Options':'nosniff','Vary':'Origin'};
+  if(request.headers.get('Origin')==='https://sahne-dizi-kesif.metealp.chatgpt.site')
+    headers['Access-Control-Allow-Origin']='https://sahne-dizi-kesif.metealp.chatgpt.site';
   try{
     const url=new URL(request.url),value=url.searchParams.get('id');
     if(!/^[1-9]\d{0,9}$/.test(value||'')||[...url.searchParams.keys()].some(key=>key!=='id'))

@@ -40,11 +40,21 @@ const mediaUrl=(value,host)=>{
 const imageType=raw=>!raw||typeof raw!=='object'?null:raw.type==='background'||(!raw.type&&raw.resolutions?.original?.width>raw.resolutions?.original?.height*1.3)
   ?'background':raw.type==='banner'?'banner':raw.type==='poster'||raw.type===null?'poster':null;
 
-export function normalizeImages(tvmazeImages,backdrops,title,mainImage){
+export function normalizeImages(tvmazeImages,backdrops,title,mainImage,episodes=[]){
   const result=[],seen=new Set();
   const add=image=>{if(image.url&&!seen.has(image.url)){seen.add(image.url);result.push(image);}};
   // Landscape artwork belongs to the exact IMDb-matched show, never a search neighbour.
-  for(const raw of (Array.isArray(backdrops)?backdrops:[]).slice(0,8)){
+  // Actual episode stills lead the gallery; first-season images reduce accidental spoilers.
+  const stills=(Array.isArray(episodes)?episodes:[]).filter(ep=>ep?.image).sort((a,b)=>Number(a.season)-Number(b.season)||Number(a.number)-Number(b.number));
+  for(const ep of stills){
+    const url=mediaUrl(ep.image.original||ep.image.medium,'static.tvmaze.com');
+    if(!url||!new URL(url).pathname.startsWith('/uploads/images/'))continue;
+    const season=Number(ep.season)||0,number=Number(ep.number)||0;
+    add({url,thumbnail:mediaUrl(ep.image.medium,'static.tvmaze.com')||url,type:'episode',
+      caption:`${title} · ${season}. sezon, ${number}. bölüm${ep.name?` · ${cleanText(ep.name,100)}`:''}`,source:'TVmaze'});
+    if(result.length>=8)break;
+  }
+  for(const raw of (Array.isArray(backdrops)?backdrops:[]).slice(0,6)){
     const path=raw?.backdropUrl;
     if(typeof path!=='string'||!/^\/backdrop\/\d+\/s1920\/[\w%.,()\-]+\.jpg$/i.test(path))continue;
     add({url:`https://images.justwatch.com${path}`,thumbnail:`https://images.justwatch.com${path.replace('/s1920/','/s640/')}`,
@@ -127,14 +137,16 @@ export async function fetchMedia(id,{fetcher=fetch,now=()=>new Date(),getShow}={
     for(const alias of aliases){nodes.push(...await lookup(alias));matched=matchTitle(show,nodes,aliases);if(matched)return matched;}
     return null;
   };
-  const [artwork,match]=await Promise.allSettled([
+  const [artwork,match,episodes]=await Promise.allSettled([
     jsonRequest(fetcher,`https://api.tvmaze.com/shows/${id}/images`,{},deadline),findMatched(),
+    jsonRequest(fetcher,`https://api.tvmaze.com/shows/${id}/episodes?specials=1`,{},deadline),
   ]);
   const matched=match.status==='fulfilled'?match.value:null;
   const node=matched?.node,path=node?.content?.fullPath;
   const source={tvmaze:`https://www.tvmaze.com/shows/${id}`,
     justwatch:typeof path==='string'&&/^\/us\/tv-show\/[\w-]+$/.test(path)?`https://www.justwatch.com${path}`:null};
-  const images=normalizeImages(artwork.status==='fulfilled'?artwork.value:[],node?.content?.backdrops,show.title,raw.image);
+  const images=normalizeImages(artwork.status==='fulfilled'?artwork.value:[],node?.content?.backdrops,show.title,raw.image,
+    episodes.status==='fulfilled'?episodes.value:[]);
   let trailer=null,trailerStatus=match.status==='rejected'?'unavailable':matched?'missing':'unmatched';
   if(matched){
     const names=[show.title,node.content?.title,node.content?.originalTitle].filter(Boolean);
@@ -149,7 +161,7 @@ export async function fetchMedia(id,{fetcher=fetch,now=()=>new Date(),getShow}={
       trailerStatus=trailer?'available':checked.some(row=>row.status==='rejected')?'unavailable':'missing';
     }
   }
-  const partial=artwork.status==='rejected'||trailerStatus==='unavailable';
+  const partial=artwork.status==='rejected'||episodes.status==='rejected'||trailerStatus==='unavailable';
   if(partial&&!images.length&&!trailer)throw new MediaError('SOURCE_UNAVAILABLE','Dizi medyaları şu an yüklenemedi. Tekrar deneyebilirsin.');
   return {show:{id,title:show.title},trailer,images,source,checkedAt:now().toISOString(),freshness:'fresh',
     state:partial?'partial':'ready',trailerStatus,match:matched?{id:node.id,method:matched.method}:null};

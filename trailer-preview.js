@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const cardSelector='.card,.ranking-card,.recommendation,.platform-card,.character-card';
+  const cardSelector='.card,.ranking-card,.recommendation,.platform-card,.character-card,.continue-card,.diary-entry,.taste-feedback-posters>button[data-detail]';
   const hover=matchMedia('(hover: hover) and (pointer: fine)'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icons={play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg>',mute:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5zm5 4 5 6m0-6-5 6"/></svg>',sound:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5zm4 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg>'};
@@ -38,38 +38,48 @@
   }
   async function showPreview(card,token){
     const id=idFor(card),show=context.getShow?.(id);if(!show||token!==sequence||!card.isConnected||!permitted())return;
+    const panel=document.createElement('aside');panel.className='trailer-preview preview-loading';panel.setAttribute('aria-label',`${show.name} fragman önizlemesi`);
+    const genres=(show.genres||[]).slice(0,2).map(g=>context.genreName?.(g)||g).join(' / ');
+    const cover=show.backdrop||show.image?.original||show.image?.medium;
+    panel.innerHTML=`<div class="trailer-preview-screen">${cover?`<img class="trailer-preview-cover" src="${escape(cover)}" alt="" width="480" height="270">`:''}<div class="trailer-preview-player"></div><span class="trailer-preview-loading" aria-hidden="true"></span><button type="button" class="trailer-preview-play" data-preview-play hidden aria-label="${escape(show.name)} fragmanını oynat">${icons.play}<span>Önizlemeyi oynat</span></button><button type="button" class="trailer-preview-close" data-preview-close aria-label="Önizlemeyi kapat">×</button></div><div class="trailer-preview-copy"><span class="trailer-preview-eyebrow">SAHNE / FRAGMAN ÖNİZLEMESİ</span><h3>${escape(show.name)}</h3><p>${escape([show.year,genres].filter(Boolean).join(' · '))}</p><div class="trailer-preview-actions"><button type="button" class="trailer-preview-detail" data-preview-detail>${icons.play}<span>Diziyi keşfet</span></button><button type="button" class="trailer-preview-sound" data-preview-sound disabled aria-label="Önizlemenin sesini aç" aria-pressed="false">${icons.mute}</button></div><p class="trailer-preview-status" role="status">Fragman bulunuyor…</p><a class="trailer-preview-source" hidden target="_blank" rel="noopener noreferrer">Fragmanı YouTube’da aç</a></div>`;
+    window.SahneGallery?.stop();const current={card,panel,id,player:null,muted:true};active=current;pendingCard=null;document.body.append(panel);card.classList.add('sahne-preview-active');position(panel,card);
+    const alive=()=>active===current&&card.isConnected&&permitted();
+    panel.addEventListener('pointerenter',()=>clearTimeout(leaveTimer));panel.addEventListener('pointerleave',event=>{if(!card.contains(event.relatedTarget))leaveTimer=setTimeout(stop,180);});
+    panel.querySelector('[data-preview-close]').addEventListener('click',stop);
+    panel.querySelector('[data-preview-detail]').addEventListener('click',()=>{stop();context.openDetail?.(id);});
+    panel.querySelector('[data-preview-sound]').addEventListener('click',()=>{
+      if(!current.player)return;current.muted=!current.muted;
+      if(current.muted)current.player.mute();else{current.player.unMute();current.player.setVolume(50);current.player.playVideo();}
+      const button=panel.querySelector('[data-preview-sound]');button.innerHTML=icons[current.muted?'mute':'sound'];button.setAttribute('aria-pressed',String(!current.muted));button.setAttribute('aria-label',current.muted?'Önizlemenin sesini aç':'Önizlemeyi sessize al');status(current,current.muted?'Sessiz önizleme':'Önizleme · ses açık');
+    });
+    panel.querySelector('[data-preview-play]').addEventListener('click',()=>{current.player?.mute();current.player?.playVideo();});
     try{
       const media=await window.SahneMedia.lookup(id);
-      if(token!==sequence||!card.isConnected||!permitted()||!media.trailer)return;
-      const trailer=media.trailer,panel=document.createElement('aside');panel.className='trailer-preview';panel.setAttribute('aria-label',`${show.name} fragman önizlemesi`);
-      const genres=(show.genres||[]).slice(0,2).map(g=>context.genreName?.(g)||g).join(' / ');
-      panel.innerHTML=`<div class="trailer-preview-screen">${trailer.thumbnail?`<img class="trailer-preview-cover" src="${escape(trailer.thumbnail)}" alt="" width="480" height="270">`:''}<div class="trailer-preview-player"></div><button type="button" class="trailer-preview-play" data-preview-play hidden aria-label="${escape(show.name)} fragmanını oynat">${icons.play}<span>Önizlemeyi oynat</span></button><button type="button" class="trailer-preview-close" data-preview-close aria-label="Önizlemeyi kapat">×</button></div><div class="trailer-preview-copy"><span class="trailer-preview-eyebrow">SAHNE / FRAGMAN ÖNİZLEMESİ</span><h3>${escape(show.name)}</h3><p>${escape([show.year,genres].filter(Boolean).join(' · '))}</p><div class="trailer-preview-actions"><button type="button" class="trailer-preview-detail" data-preview-detail>${icons.play}<span>Diziyi keşfet</span></button><button type="button" class="trailer-preview-sound" data-preview-sound aria-label="Önizlemenin sesini aç" aria-pressed="false">${icons.mute}</button></div><p class="trailer-preview-status" role="status">Sessiz önizleme yükleniyor…</p><a class="trailer-preview-source" href="https://www.youtube.com/watch?v=${trailer.videoId}" target="_blank" rel="noopener noreferrer">Fragmanı YouTube’da aç</a></div>`;
-      window.SahneGallery?.stop();const current={card,panel,id,player:null,muted:true};active=current;pendingCard=null;document.body.append(panel);card.classList.add('sahne-preview-active');position(panel,card);
-      panel.addEventListener('pointerenter',()=>clearTimeout(leaveTimer));panel.addEventListener('pointerleave',event=>{if(!card.contains(event.relatedTarget))leaveTimer=setTimeout(stop,180);});
-      panel.querySelector('[data-preview-close]').addEventListener('click',stop);
-      panel.querySelector('[data-preview-detail]').addEventListener('click',()=>{stop();context.openDetail?.(id);});
-      panel.querySelector('[data-preview-sound]').addEventListener('click',()=>{
-        if(!current.player)return;current.muted=!current.muted;
-        if(current.muted)current.player.mute();else{current.player.unMute();current.player.setVolume(50);current.player.playVideo();}
-        const button=panel.querySelector('[data-preview-sound]');button.innerHTML=icons[current.muted?'mute':'sound'];button.setAttribute('aria-pressed',String(!current.muted));button.setAttribute('aria-label',current.muted?'Önizlemenin sesini aç':'Önizlemeyi sessize al');status(current,current.muted?'Sessiz önizleme':'Önizleme · ses açık');
-      });
-      panel.querySelector('[data-preview-play]').addEventListener('click',()=>{current.player?.mute();current.player?.playVideo();});
-      const YT=await youtube();if(active!==current)return;if(!card.isConnected||!permitted()){stop();return;}
+      if(!alive()){if(active===current)stop();return;}
+      if(!media.trailer){
+        panel.classList.remove('preview-loading');
+        status(current,media.trailerStatus==='unavailable'?'Fragman kaynağına şu an ulaşılamıyor.':'Bu dizi için oynatılabilir fragman bulunamadı. Görsellerini ayrıntıda keşfet.');
+        return;
+      }
+      const trailer=media.trailer,source=panel.querySelector('.trailer-preview-source');
+      source.href=`https://www.youtube.com/watch?v=${trailer.videoId}`;source.hidden=false;
+      if(trailer.thumbnail){const image=panel.querySelector('.trailer-preview-cover');if(image)image.src=trailer.thumbnail;}
+      status(current,'Sessiz önizleme yükleniyor…');
+      const YT=await youtube();if(!alive()){if(active===current)stop();return;}
       const frame=document.createElement('iframe');frame.title=`${show.name} fragman önizlemesi`;frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.referrerPolicy='strict-origin-when-cross-origin';frame.tabIndex=-1;
       frame.src=`https://www.youtube-nocookie.com/embed/${trailer.videoId}?enablejsapi=1&origin=${encodeURIComponent(location.origin)}&autoplay=1&mute=1&controls=0&playsinline=1&rel=0`;
       panel.querySelector('.trailer-preview-player').append(frame);
       current.player=new YT.Player(frame,{events:{
-        onReady:event=>{if(active!==current||!card.isConnected||!permitted()){if(active===current)stop();else event.target.destroy();return;}event.target.mute();event.target.playVideo();},
+        onReady:event=>{if(!alive()){if(active===current)stop();else event.target.destroy();return;}panel.querySelector('[data-preview-sound]').disabled=false;event.target.mute();event.target.playVideo();},
         onStateChange:event=>{
           if(active!==current)return;
-          if(event.data===1){panel.classList.add('preview-playing');panel.classList.remove('preview-blocked');panel.querySelector('[data-preview-play]').hidden=true;status(current,current.muted?'Sessiz önizleme':'Önizleme · ses açık');}
+          if(event.data===1){panel.classList.remove('preview-loading');panel.classList.add('preview-playing');panel.classList.remove('preview-blocked');panel.querySelector('[data-preview-play]').hidden=true;status(current,current.muted?'Sessiz önizleme':'Önizleme · ses açık');}
           else if(event.data===0){event.target.seekTo(0,true);event.target.playVideo();}
         },
-        onAutoplayBlocked:()=>blocked(current,'Önizlemeyi başlatmak için oynat düğmesine dokun.'),
-        onError:()=>{blocked(current,'Bu fragman burada oynatılamıyor; YouTube bağlantısını kullanabilirsin.');panel.querySelector('[data-preview-play]').hidden=true;}
+        onAutoplayBlocked:()=>{panel.classList.remove('preview-loading');blocked(current,'Önizlemeyi başlatmak için oynat düğmesine dokun.');},
+        onError:()=>{panel.classList.remove('preview-loading');blocked(current,'Bu fragman burada oynatılamıyor; YouTube bağlantısını kullanabilirsin.');panel.querySelector('[data-preview-play]').hidden=true;}
       }});
-    }catch{if(active?.card===card){blocked(active,'Fragman şu an yüklenemedi. Daha sonra tekrar deneyebilirsin.');active.panel.querySelector('[data-preview-play]').hidden=true;}}
-    finally{if(token===sequence)pendingCard=null;}
+    }catch{if(active===current){panel.classList.remove('preview-loading');status(current,'Fragman şu an yüklenemedi. Kartın üzerine yeniden gelerek tekrar deneyebilirsin.');}}
   }
   function begin(card){
     clearTimeout(leaveTimer);

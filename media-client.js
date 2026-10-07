@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const entries=new Map(),pending=new Map();
+  const entries=new Map(),pending=new Map();let apiBase='';
   const safe=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:null;}catch{return null;}};
   const validId=id=>Number.isSafeInteger(Number(id))&&Number(id)>0&&Number(id)<=2147483647;
   const ttl=record=>record.state==='partial'||record.freshness==='stale'?300000:86400000;
@@ -10,7 +10,7 @@
     if(!retry&&cached&&Date.now()-cached.loadedAt<ttl(cached.record))return cached.record;
     if(pending.has(id))return pending.get(id);
     const work=(async()=>{
-      const response=await fetch(`/api/media?id=${id}`,{credentials:'omit',signal:AbortSignal.timeout(28000)});
+      const response=await fetch(`${apiBase}/api/media?id=${id}`,{credentials:'omit',signal:AbortSignal.timeout(28000)});
       const data=await response.json();
       if(!response.ok)throw Error(data.error?.message||'Dizi görselleri şu an yüklenemedi.');
       if(data.show?.id!==id||!Array.isArray(data.images))throw Error('Dizi görselleri doğrulanamadı.');
@@ -23,5 +23,8 @@
     })().finally(()=>pending.delete(id));
     pending.set(id,work);return work;
   }
-  window.SahneMedia={lookup,get:id=>entries.get(Number(id))?.record||null};
+  window.SahneMedia={lookup,get:id=>entries.get(Number(id))?.record||null,install:options=>{
+    const next=options?.apiBase==='https://sahne-dizi-kesif.vercel.app'?options.apiBase:'';
+    if(next!==apiBase){apiBase=next;entries.clear();}
+  }};
 })();
