@@ -5,9 +5,19 @@
   "description": "Sahne dizi keşfi ve kişisel izleme günlüğü",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node tests/recommendations.cjs"
+    "test": "node tests/recommendations.cjs",
+    "dev": "node --env-file=.env.local scripts/dev.mjs",
+    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
+    "test:community": "node --env-file=.env.local tests/community.mjs"
   },
   "engines": {
-    "node": ">=20"
+    "node": "24.x"
+  },
+  "type": "module",
+  "dependencies": {
+    "@vercel/functions": "^3.9.11",
+    "better-auth": "^1.7.7",
+    "pg": "^8.23.1",
+    "zod": "^4.6.5"
   }
 }

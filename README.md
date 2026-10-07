@@ -1,6 +1,6 @@
 # Sahne — Hikâyenin içine gir
 
-Türkçe dizi keşfi ve kişisel izleme günlüğü. Canlı sürüm: https://sahne-dizi-kesif.vercel.app/
+Türkçe dizi keşfi, sosyal izleme günlüğü ve dizi topluluğu. Canlı sürüm: https://sahne-dizi-kesif.vercel.app/
 
 ## Deneyim
 
@@ -11,22 +11,36 @@ Türkçe dizi keşfi ve kişisel izleme günlüğü. Canlı sürüm: https://sah
 - **24 görselli seçki**: modern klasikler, 90’lar, Türkçe/Korece/Japonca hikâyeler, suç, gelecek, tarih, kısa bölümler ve daha fazlası.
 - Beğendim / çok beğendim / beğenmedim sinyallerine göre değişen öneriler. Tür, konu, atmosfer, süre, dil ve yıl benzerliği kullanılır. Çok beğenme daha güçlüdür; olumsuz tercihler benzer dizileri geriye iter.
 - Katalog ve platform sayfalarında hemen güncellenen öneri afişleri; öneri kartlarında hangi tercihin etkili olduğunu gösteren açıklama. Arama filtreleri kişisel öneri havuzunu daraltmaz.
-- Arşivdeki ve değerlendirilmiş diziler yeniden önerilmez. Favoriler ve 3,5+ / 2 ve altı yıldızlar, açık bir beğeni verilmemişse önerileri etkiler. Kişisel notlar kullanılmaz.
-- Sonra izle, izleme durumları, özel listeler, yıldız puanları, notlar ve bölüm takibi.
+- Arşivdeki ve değerlendirilmiş diziler yeniden önerilmez. Favoriler ve 7+ / 4 ve altı puanlar, açık bir beğeni verilmemişse önerileri etkiler. Kişisel notlar kullanılmaz.
+- Better Auth ile e-posta/şifre hesabı; herkese açık profil, kırpılabilir profil fotoğrafı, biyografi ve takip.
+- Diziye ve kategoriye bağlı forum konuları, yanıtlar, yorumlar, spoiler perdesi, beğeniler ve içerik bildirme.
+- Herkese açık izleme kayıtları ve profilde izlenen diziler; özel günlük notları ayrı tutulur.
+- Neon Postgres üzerinde kalıcı hesap arşivi, tercihler, listeler ve 10 üzerinden yarım puan adımları.
+- Sonra izle, izleme durumları, özel listeler, 10 üzerinden puanlar, notlar ve bölüm takibi.
 - Ülkeye göre doğrulanmış izleme kayıtları; kaydı bulunmayan başlıklarda ülkenin JustWatch kataloğuna arama bağlantısı.
 - Mobil düzen, tarayıcı geçmişiyle geri dönüş ve azaltılmış hareket tercihine uyum.
 
 ## Yerel çalıştırma ve doğrulama
 
-Statik HTML, CSS ve JavaScript. Uygulamada harici Node bağımlılığı yoktur; Vercel için yayın dosyaları `dist/` klasörüne hazırlanır.
+Statik HTML/CSS/JavaScript arayüzü, Node.js 24 Vercel Functions API, Better Auth ve Neon Postgres. Kimlik doğrulama parolaları güvenli hash ile tutulur; oturumlar HTTP-only çerez kullanır.
 
 ```sh
-python3 -m http.server 4181 --directory .
-npm run build
-npm test
+npm ci
+cp .env.example .env.local
+# .env.local içindeki sunucu değişkenlerini kendi veritabanınızla doldurun.
+npm run db:migrate
+npm run dev
 ```
 
-http://localhost:4181 adresini açın. Canlı katalog araması, bölüm takvimi ve ek dizi ayrıntıları için internet bağlantısı gerekir. Regresyon testi gerçek başlangıç kataloğuyla beğeni etkisini, güçlü tercihi, tüm arşiv durumlarını, yıldız/favori sinyallerini ve deterministik sonuçları denetler.
+http://localhost:4182 adresini açın. `.env.local` ve `.vercel` Git tarafından yok sayılır. Veritabanı şeması için `scripts/migrate.mjs` idempotent olarak auth ve sosyal tabloları oluşturur. Uygulama istekleri sırasında şema oluşturulmaz.
+
+```sh
+npm run build
+npm test
+npm run test:community
+```
+
+Son komut yerel API ve gerçek veritabanında iki geçici test hesabıyla oturum, yetki, özel veri, forum, puan, takip ve hesap arşivi akışlarını denetler; oluşturduğu hesapları sonunda temizler. Canlı katalog araması ve ek dizi ayrıntıları için internet bağlantısı gerekir.
 
 ## Vercel yayını
 
@@ -40,7 +54,9 @@ Tam indeks ve popülerlik/puan sıralamaları kaynak tarihi görünen bir anlık
 
 Platform kategorileri özgün yayıncı ve stüdyo ailesini gösterir; seçilen ülkede abonelikle erişim garantisi değildir. HBO/Max, Apple TV, Netflix ve Disney+/FX/Hulu kayıtları ile kaynakla doğrulanmış köken bilgileri kullanılır. Yıl ilk yayın yılı, puan TVmaze kullanıcı ortalamasıdır; oy sayısı olmayan kayıtlarda uydurma oy sayısı gösterilmez. İzleme kayıtlarının kontrol tarihi dizi ayrıntısında görünür.
 
-Arşiv ve beğeniler bu cihazın tarayıcısında saklanır. Hesap veya cihazlar arasında eşitleme yoktur. Arşiv, uygulamadaki indirme düğmesiyle dışa aktarılabilir.
+Misafir arşivi cihazda kalır. Oturum açıldığında hesaba ait arşiv yüklenir; cihazdaki eski arşiv yalnızca açık aktarım düğmesiyle hesaba eklenir. Günlükteki özel notlar profil ve akış API yanıtlarına dahil edilmez. İzleme kaydı veya yorum formundan paylaşılan metinler herkese açıktır. Arşiv indirme düğmesiyle dışa aktarılabilir.
+
+Sunucuda `DATABASE_URL`, `BETTER_AUTH_SECRET` ve `BETTER_AUTH_URL` gerekir. Üretim adresi auth origin listesinde bulunmalıdır. Veritabanına ve uygulama dosyalarına yazılan veriler farklıdır: API ve server kaynakları statik `dist` içine kopyalanmaz.
 
 ## Görseller ve kaynaklar
 
