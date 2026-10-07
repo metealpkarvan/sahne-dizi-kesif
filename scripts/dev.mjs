@@ -12,7 +12,7 @@ createServer(async(req,res)=>{
     if(url.pathname.startsWith('/api/')){
       const chunks=[];let size=0;for await(const chunk of req){size+=chunk.length;if(size>2_000_000){res.writeHead(413).end();return;}chunks.push(chunk);}
       const request=new Request(url,{method:req.method,headers:{...req.headers,'x-forwarded-for':req.socket.remoteAddress||'127.0.0.1'},...(['GET','HEAD'].includes(req.method)?{}:{body:Buffer.concat(chunks)})});
-      const mod=url.pathname.startsWith('/api/auth/')||url.pathname==='/api/auth-router'?await import('../api/auth-router.js'):await import('../api/community.js');
+      const mod=url.pathname.startsWith('/api/auth/')||url.pathname==='/api/auth-router'?await import('../api/auth-router.js'):url.pathname==='/api/watch'?await import('../api/watch.js'):await import('../api/community.js');
       const handler=mod[req.method];const response=handler?await handler(request):new Response('Method not allowed',{status:405});
       res.statusCode=response.status;response.headers.forEach((value,key)=>{if(key!=='set-cookie')res.setHeader(key,value);});
       const cookies=response.headers.getSetCookie();if(cookies.length)res.setHeader('Set-Cookie',cookies);

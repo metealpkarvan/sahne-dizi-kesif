@@ -108,3 +108,13 @@ CREATE INDEX IF NOT EXISTS sahne_posts_topic ON sahne_posts (topic_id, created_a
 CREATE INDEX IF NOT EXISTS sahne_follows_target ON sahne_follows (following_id);
 CREATE INDEX IF NOT EXISTS sahne_notifications_recipient ON sahne_notifications (recipient_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS sahne_ratings_show ON sahne_ratings (show_id);
+
+-- Public availability snapshots contain no account or session data.
+CREATE TABLE IF NOT EXISTS sahne_watch_cache (
+  show_id integer NOT NULL CHECK (show_id > 0),
+  country text NOT NULL CHECK (country IN ('TR','US','GB','DE')),
+  version integer NOT NULL,
+  payload jsonb NOT NULL,
+  checked_at timestamptz NOT NULL,
+  PRIMARY KEY (show_id,country)
+);

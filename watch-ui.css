@@ -1,0 +1,54 @@
+.watch-guide{padding:8px 0 16px;color:var(--text,#f0f0e9)}
+.watch-guide-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;margin-bottom:30px;padding-bottom:26px;border-bottom:1px solid rgba(255,255,255,.1)}
+.watch-guide-heading .tiny-label{display:block;margin-bottom:13px;color:var(--lime,#d7fa5b);font-size:10px;letter-spacing:.2em}
+.watch-guide-heading h3{font-size:clamp(24px,3.4vw,38px);line-height:1.18;font-weight:500;letter-spacing:-.05em;margin:0 0 12px}
+.watch-guide-heading h3 em{display:block;font-family:Georgia,serif;font-weight:400;letter-spacing:-.025em;color:#c5c8bc}
+.watch-guide-heading p{font-size:13px;color:#a9aca5;margin:0}
+.watch-guide-country{display:grid;gap:7px;flex-shrink:0;font-size:11px;letter-spacing:.03em;color:#a9aca5}
+.watch-guide-country select{min-width:175px;border:1px solid #363b32;border-radius:9px;background:#191d18;padding:12px 32px 12px 13px;color:#f3f4ed;font:inherit;font-size:13px;cursor:pointer}
+.watch-guide-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.watch-guide-filters button{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid #30352d;border-radius:100px;color:#bfc2b9;background:transparent;font-size:11px;line-height:1.3;cursor:pointer}
+.watch-guide-filters button span{font-size:10px;opacity:.65}
+.watch-guide-filters button[aria-pressed=true]{background:#d7fa5b;border-color:#d7fa5b;color:#161b08}
+.watch-offer-section{margin-bottom:27px}
+.watch-offer-section-title{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.watch-offer-section-title h4{font-size:12px;letter-spacing:.04em;font-weight:500;margin:0;color:#d1d4c9}
+.watch-guide-dot{width:6px;height:6px;border-radius:50%;background:#d7fa5b}
+.watch-guide-dot.buy,.watch-guide-dot.rent{background:#c1ab85}
+.watch-guide-dot.free,.watch-guide-dot.ads{background:#9bbeb7}
+.watch-offer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.watch-offer{display:flex;flex-direction:column;min-width:0;padding:18px;background:linear-gradient(145deg,#1a201a,#131713);border:1px solid #333a2d;border-radius:14px;transition:border-color .2s,transform .2s}
+.watch-offer:hover{border-color:#677746;transform:translateY(-2px)}
+.watch-offer-top{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:22px}
+.watch-offer-logo{display:grid;place-items:center;position:relative;width:48px;height:48px;flex-shrink:0;background:#090c0a;border-radius:10px;overflow:hidden;color:#d7fa5b;font-size:14px;font-weight:600}
+.watch-offer-logo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.watch-offer-logo.has-image img{display:block}
+.watch-offer-logo.has-image>span{visibility:hidden}
+.watch-offer-kind{font-size:9px;line-height:1.5;text-align:right;text-transform:uppercase;letter-spacing:.07em;color:#a7af99}
+.watch-offer h5{font-size:18px;font-weight:500;line-height:1.25;letter-spacing:-.025em;margin:0 0 7px;overflow-wrap:anywhere}
+.watch-offer-detail{font-size:11px;line-height:1.5;color:#a6ac9f;margin:0 0 15px}
+.watch-offer-meta{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:16px;min-height:20px}
+.watch-offer-meta>span{border:1px solid #48513b;border-radius:4px;padding:3px 6px;font-size:9px;letter-spacing:.07em;color:#c4d6a4}
+.watch-offer-meta strong{font-size:14px;font-weight:500;color:#f0f0e9}
+.watch-offer-link{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #343e2b;margin-top:auto;padding-top:13px;color:#d7fa5b;font-size:12px;text-decoration:none}
+.watch-offer-link svg,.watch-guide-source svg,.watch-guide-countries svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.4;flex-shrink:0}
+.watch-guide-note{font-size:11px;line-height:1.7;color:#92998b;max-width:660px;margin:24px 0 18px}
+.watch-guide-source{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-top:17px;border-top:1px solid #2c3228;font-size:10px;line-height:1.5;color:#979d8f}
+.watch-guide-source a{display:inline-flex;align-items:center;gap:6px;color:#b5bda9;text-decoration:none}
+.watch-guide-empty{display:flex;align-items:flex-start;gap:22px;background:radial-gradient(ellipse at left top,#242d1c,#151b13 75%);border:1px solid #37452c;border-radius:14px;padding:28px;margin-bottom:25px}
+.watch-guide-empty>svg{width:34px;height:34px;flex-shrink:0;fill:none;stroke:#bacd91;stroke-width:1.2}
+.watch-guide-empty h4{font-size:21px;line-height:1.35;letter-spacing:-.025em;font-weight:500;margin:0 0 11px;max-width:470px}
+.watch-guide-empty p{font-size:13px;line-height:1.8;color:#aeb7a2;margin:0 0 20px;max-width:520px}
+.watch-guide-empty .secondary{font-size:12px;padding:11px 18px}
+.watch-guide-countries{display:flex;flex-wrap:wrap;gap:8px}
+.watch-guide-countries button{display:flex;align-items:center;gap:9px;border:1px solid #4d5e39;background:#26331b;border-radius:7px;padding:10px 12px;font-size:11px;color:#d2e6b0;cursor:pointer}
+.watch-guide-warning{font-size:12px;line-height:1.7;background:#30291a;border:1px solid #5c4d2e;color:#d9c89f;border-radius:9px;padding:13px 16px;margin-bottom:22px}
+.watch-guide-warning button{color:inherit;text-decoration:underline;background:none;border:0;font:inherit;cursor:pointer}
+.watch-guide-loading>p{font-size:13px;color:#a8b099;margin-bottom:20px}
+.watch-guide-skeletons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.watch-guide-skeletons span{height:210px;border:1px solid #2f3829;border-radius:14px;background:linear-gradient(100deg,#151b13 30%,#222b1b 50%,#151b13 70%);background-size:200% 100%;animation:watch-shimmer 1.8s ease-in-out infinite}
+.watch-guide button:focus-visible,.watch-guide a:focus-visible,.watch-guide select:focus-visible{outline:2px solid #d7fa5b;outline-offset:4px}
+@keyframes watch-shimmer{to{background-position:-200% 0}}
+@media(max-width:850px){.watch-offer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.watch-offer-kind{max-width:100px}.watch-guide-heading{gap:18px}}
+@media(max-width:560px){.watch-guide-heading{display:grid;gap:18px;margin-bottom:22px;padding-bottom:22px}.watch-guide-heading h3{font-size:29px}.watch-guide-heading h3 em{display:inline}.watch-guide-country{display:flex;align-items:center;justify-content:space-between;font-size:11px}.watch-guide-country select{min-width:180px}.watch-offer-grid{gap:9px}.watch-offer{padding:14px 12px;border-radius:11px}.watch-offer-top{margin-bottom:17px;align-items:flex-start;flex-direction:column;gap:10px}.watch-offer-logo{width:42px;height:42px}.watch-offer-kind{max-width:none;text-align:left;font-size:8px}.watch-offer h5{font-size:16px}.watch-offer-detail{font-size:10px}.watch-offer-link{font-size:11px}.watch-guide-filters{gap:6px;margin-bottom:23px}.watch-guide-filters button{padding:8px 10px;font-size:10px}.watch-guide-empty{padding:22px 18px;flex-direction:column;gap:15px}.watch-guide-empty h4{font-size:22px}.watch-guide-empty p{font-size:12px}.watch-guide-countries{gap:6px}.watch-guide-countries button{font-size:10px;padding:9px 10px}.watch-guide-source{font-size:9px}.watch-guide-skeletons{grid-template-columns:repeat(2,minmax(0,1fr))}.watch-guide-skeletons span:last-child{display:none}}
+@media(prefers-reduced-motion:reduce){.watch-guide-skeletons span{animation:none}.watch-offer{transition:none}.watch-offer:hover{transform:none}}

@@ -17,7 +17,7 @@ Türkçe dizi keşfi, sosyal izleme günlüğü ve dizi topluluğu. Canlı sür�
 - Herkese açık izleme kayıtları ve profilde izlenen diziler; özel günlük notları ayrı tutulur.
 - Neon Postgres üzerinde kalıcı hesap arşivi, tercihler, listeler ve 10 üzerinden yarım puan adımları.
 - Sonra izle, izleme durumları, özel listeler, 10 üzerinden puanlar, notlar ve bölüm takibi.
-- Ülkeye göre doğrulanmış izleme kayıtları; kaydı bulunmayan başlıklarda ülkenin JustWatch kataloğuna arama bağlantısı.
+- Dizi ayrıntısında ülkeye göre izleme rehberi: abonelik, ücretsiz/reklamlı erişim, kiralama ve satın alma seçenekleri; platform görselleri, kalite, mevcut fiyat ve doğrudan platform bağlantıları. Kullanıcı sonuçları görmek için Sahne’den ayrılmaz.
 - Mobil düzen, tarayıcı geçmişiyle geri dönüş ve azaltılmış hareket tercihine uyum.
 
 ## Yerel çalıştırma ve doğrulama
@@ -37,6 +37,7 @@ http://localhost:4182 adresini açın. `.env.local` ve `.vercel` Git tarafından
 ```sh
 npm run build
 npm test
+npm run test:watch
 npm run test:community
 ```
 
@@ -52,7 +53,7 @@ GitHub `main` dalı Vercel projesine bağlıdır; bu dala yapılan güncellemele
 
 Tam indeks ve popülerlik/puan sıralamaları kaynak tarihi görünen bir anlık görüntüdür. Yeni başlayanlar ilk yayın tarihine, devam edenler TVmaze’in yayın durumuna göre seçilir; devam ediyor etiketi bugün yeni bölüm yayımlandığı anlamına gelmez. Platformların son yedi günlük web bölüm takvimi sayfa açıldığında kontrol edilir ve altı saat önbelleğe alınır. Yeni bölüm rafında kayıtlı bölüm adı ve yayın tarihi gösterilir. Takvim bağlantısı yoksa katalog rafları kullanılmaya devam eder.
 
-Platform kategorileri özgün yayıncı ve stüdyo ailesini gösterir; seçilen ülkede abonelikle erişim garantisi değildir. HBO/Max, Apple TV, Netflix ve Disney+/FX/Hulu kayıtları ile kaynakla doğrulanmış köken bilgileri kullanılır. Yıl ilk yayın yılı, puan TVmaze kullanıcı ortalamasıdır; oy sayısı olmayan kayıtlarda uydurma oy sayısı gösterilmez. İzleme kayıtlarının kontrol tarihi dizi ayrıntısında görünür.
+Platform kategorileri özgün yayıncı ve stüdyo ailesini gösterir; seçilen ülkede abonelikle erişim garantisi değildir. HBO/Max, Apple TV, Netflix ve Disney+/FX/Hulu kayıtları ile kaynakla doğrulanmış köken bilgileri kullanılır. Yıl ilk yayın yılı, puan TVmaze kullanıcı ortalamasıdır; oy sayısı olmayan kayıtlarda uydurma oy sayısı gösterilmez. İzleme kayıtlarının kontrol tarihi dizi ayrıntısında görünür. `/api/watch`, TVmaze kimliğini JustWatch’ın herkese açık katalog verisiyle IMDb kimliği veya kesin başlık/yıl eşleşmesi üzerinden eşleştirir; film, yeniden çevrim ve belirsiz eşleşmeleri platform kaydı gibi sunmaz. Bu bağlantı sözleşmeli bir JustWatch Partner API entegrasyonu değildir; kamuya açık katalog arayüzü değişirse uyarlama gerekebilir. Dolu kayıtlar altı saat, boş/eşleşmeyen kayıtlar bir saat Neon üzerinde önbelleğe alınır. Servis kesintisinde en fazla 72 saatlik son kayıt kontrol tarihi ve uyarıyla gösterilir. Kaynaktaki boş ülke kaydı, tüm internette erişim olmadığı iddiası değildir. Ücretsiz seçenekler bazı sezon veya bölümleri kapsayabilir; satın alma/kiralama fiyatları listedeki başlangıç fiyatıdır. Veri kaynağı her sonuçta JustWatch olarak belirtilir.
 
 Misafir arşivi cihazda kalır. Oturum açıldığında hesaba ait arşiv yüklenir; cihazdaki eski arşiv yalnızca açık aktarım düğmesiyle hesaba eklenir. Günlükteki özel notlar profil ve akış API yanıtlarına dahil edilmez. İzleme kaydı veya yorum formundan paylaşılan metinler herkese açıktır. Arşiv indirme düğmesiyle dışa aktarılabilir.
 
