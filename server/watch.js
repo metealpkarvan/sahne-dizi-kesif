@@ -3,6 +3,7 @@ import {WATCH_COUNTRIES,WatchError,fetchAvailability} from './watch-core.js';
 
 const memory=new Map(),inflight=new Map();
 const VERSION=1;
+const legacySiteOrigin='https://sahne-dizi-kesif.metealp.chatgpt.site';
 const maxStale=72*60*60*1000;
 const ttl=record=>record.state==='verified'&&record.offers.length?6*60*60*1000:60*60*1000;
 const age=record=>Date.now()-new Date(record.checkedAt).getTime();
@@ -40,7 +41,10 @@ export async function getAvailability(id,country){
 }
 
 export async function watchHandler(request){
-  const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
+  // Only public availability data is shared with the original Sahne publication.
+  // Account, community and media endpoints keep their existing origin policies.
+  const headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Vary':'Origin'};
+  if(request.headers.get('Origin')===legacySiteOrigin)headers['Access-Control-Allow-Origin']=legacySiteOrigin;
   try{
     const url=new URL(request.url),id=Number(url.searchParams.get('id')),country=url.searchParams.get('country')||'TR';
     if(!/^[1-9]\d{0,9}$/.test(url.searchParams.get('id')||'')||[...url.searchParams.keys()].some(k=>!['id','country'].includes(k)))

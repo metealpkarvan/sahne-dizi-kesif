@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const entries=new Map(),pending=new Map(),shows=new Map(),filters=new Map();
-  let context={countries:{TR:'Türkiye',US:'ABD',GB:'Birleşik Krallık',DE:'Almanya'}};
+  let context={apiBase:'',countries:{TR:'Türkiye',US:'ABD',GB:'Birleşik Krallık',DE:'Almanya'}};
   const labels={subscription:'Abonelikle izle',free:'Ücretsiz seçenekler',ads:'Reklamlı izle',rent:'Kirala',buy:'Satın al'};
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const safeUrl=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password?u.href:'';}catch{return '';}};
@@ -77,7 +77,7 @@
     entries.set(key,{status:'loading'});
     const work=(async()=>{
       try{
-        const response=await fetch(`/api/watch?id=${Number(id)}&country=${country}`,{credentials:'omit',signal:AbortSignal.timeout(28_000)});
+        const response=await fetch(`${context.apiBase}/api/watch?id=${Number(id)}&country=${country}`,{credentials:'omit',signal:AbortSignal.timeout(28_000)});
         const record=await response.json();
         if(!response.ok)throw Error(record.error?.message||'İzleme bilgileri şu an yüklenemedi.');
         if(record.show?.id!==Number(id)||record.country!==country||!['verified','unmatched'].includes(record.state)||!Array.isArray(record.offers))throw Error('İzleme bilgisi doğrulanamadı.');
@@ -95,5 +95,5 @@
     else if('watchRetry'in button.dataset){lookup(id,country,{retry:true}).catch(()=>{});repaint(id,country);}
   });
   document.addEventListener('error',event=>{if(event.target.matches?.('.watch-offer-logo img'))event.target.parentElement.classList.remove('has-image');},true);
-  window.SahneWatch={install:options=>{context={...context,...options};},render,load,lookup,get:(id,country)=>entries.get(keyFor(id,country))?.record||null};
+  window.SahneWatch={install:options=>{context={...context,...options,apiBase:options.apiBase==='https://sahne-dizi-kesif.vercel.app'?options.apiBase:''};},render,load,lookup,get:(id,country)=>entries.get(keyFor(id,country))?.record||null};
 })();

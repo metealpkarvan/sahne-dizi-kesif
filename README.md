@@ -67,3 +67,6 @@ Sunucuda `DATABASE_URL`, `BETTER_AUTH_SECRET` ve `BETTER_AUTH_URL` gerekir. Üre
 ## Görseller ve kaynaklar
 
 Dizi bilgileri TVmaze, izleme seçenekleri JustWatch kaynaklıdır. Tam indeks açıklaması: https://www.tvmaze.com/api#show-index. Platformların resmî kaynak kayıtları `catalog/platform-sources.json`, yerel tanıtım fotoğraflarının kaynakları ve kredileri `image-sources.json` içindedir. Görseller ve marka adları ilgili hak sahiplerine aittir; bu kayıtlar açık lisans anlamına gelmez.
+
+
+Eski `sahne-dizi-kesif.metealp.chatgpt.site` yayını da sabit izleme listesi yerine bu uygulamanın public `/api/watch` uç noktasını kullanır. CORS yalnızca bu tam origin için açılır; kimlik bilgileri gönderilmez ve hesap/topluluk uç noktaları bu değişikliğe dahil değildir.

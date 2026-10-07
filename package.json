@@ -9,7 +9,7 @@
     "dev": "node --env-file=.env.local scripts/dev.mjs",
     "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
     "test:community": "node --env-file=.env.local tests/community.mjs",
-    "test:watch": "node --test tests/watch.mjs",
+    "test:watch": "node --test tests/watch.mjs tests/watch-ui.mjs",
     "test:media": "node --test tests/media.mjs"
   },
   "engines": {
