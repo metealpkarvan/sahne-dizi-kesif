@@ -118,3 +118,11 @@ CREATE TABLE IF NOT EXISTS sahne_watch_cache (
   checked_at timestamptz NOT NULL,
   PRIMARY KEY (show_id,country)
 );
+
+-- Public trailers and show artwork; no personal account data.
+CREATE TABLE IF NOT EXISTS sahne_media_cache (
+  show_id integer PRIMARY KEY CHECK (show_id > 0),
+  version integer NOT NULL,
+  payload jsonb NOT NULL,
+  checked_at timestamptz NOT NULL
+);
