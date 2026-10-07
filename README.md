@@ -42,6 +42,7 @@ npm test
 npm run test:watch
 npm run test:media
 npm run test:community
+npm run test:navigation
 ```
 
 Son komut yerel API ve gerçek veritabanında iki geçici test hesabıyla oturum, yetki, özel veri, forum, puan, takip ve hesap arşivi akışlarını denetler; oluşturduğu hesapları sonunda temizler. Canlı katalog araması ve ek dizi ayrıntıları için internet bağlantısı gerekir.
@@ -72,3 +73,7 @@ Dizi bilgileri TVmaze, izleme seçenekleri JustWatch kaynaklıdır. Tam indeks a
 Eski `sahne-dizi-kesif.metealp.chatgpt.site` yayını da sabit izleme listesi yerine bu uygulamanın public `/api/watch` uç noktasını kullanır. CORS yalnızca bu tam origin için açılır; kimlik bilgileri gönderilmez ve hesap/topluluk uç noktaları bu değişikliğe dahil değildir.
 
 Fragman önizlemesi iki yayın adresinde de kullanılır. Masaüstünde kart üzerinde 650 ms beklendiğinde görselli önizleme açılır; fragman doğrulanınca sessiz oynar. Kaynak bulunamazsa açıklama gösterilir. Galeri gerçek TVmaze bölüm fotoğraflarını sezon/bölüm adıyla, ilk sezon önceliğiyle listeler. Eski Sites yayını yalnızca herkese açık medya için Vercel API'sini kullanır; bu origin için CORS izni hesap erişimi veya çerez aktarımı sağlamaz.
+
+## Tek güncel yayın
+
+Önceki `sahne-dizi-kesif.metealp.chatgpt.site` bağlantısı, dizi ve topluluk adresini koruyarak hesapların bulunduğu Vercel yayınına geçer. Kayıt: `#sahne/kayit`, giriş: `#sahne/giris`, forum: `#sahne/forum`. Üst menüde kayıt/giriş ve forum doğrudan görünür. Eski bağlantının `?legacy=1#sahne/arsiv` adresi önceki cihaz arşivini indirmek için korunur; yönlendirme yerel arşivi silmez veya başka adrese aktarmaz.

@@ -78,14 +78,16 @@
   }
   function updateAccount() {
     const button=$('#account-button'),u=user();
-    if(button){button.textContent=u?(u.name||u.username||'Profilim'):'Giriş yap';button.setAttribute('aria-label',u?'Profilini aç':'Giriş yap veya kayıt ol');}
+    if(button){button.textContent=u?(u.name||u.username||'Profilim'):'Giriş yap';button.setAttribute('aria-label',u?'Profilini aç':'Giriş yap');}
+    const signup=$('#signup-button');if(signup)signup.hidden=!!u;
     const note=$('#archive-storage-note');if(!note)return;
     note.innerHTML=u?(ready?'Arşivin hesabına kaydediliyor. Özel günlük notların yalnızca sana görünür.':'Hesabının arşivi yükleniyor. <button class="text-button" data-account-retry>Yeniden dene</button>'):'Arşivin bu cihazda saklanır. <button class="text-button" data-community-profile>Hesap oluşturarak cihazlar arasında taşı.</button>';
     const hasGuest=Object.keys(guest.entries).length||Object.keys(guest.ratings).length||guest.lists.length;
     if(u&&ready&&hasGuest)note.innerHTML+=' <button class="text-button" data-import-guest>Bu cihazdaki eski arşivi hesabıma aktar</button>';
   }
   document.addEventListener('click',async event=>{
-    if(event.target.closest('#account-button,[data-community-profile]')){if(user())navigate('profile',user().username);else window.SahneCommunity.authDialog('signup');}
+    if(event.target.closest('#signup-button'))window.SahneCommunity.authDialog('signup');
+    if(event.target.closest('#account-button,[data-community-profile]')){if(user())navigate('profile',user().username);else window.SahneCommunity.authDialog(event.target.closest('#account-button')?'login':'signup');}
     if(event.target.closest('[data-account-retry]'))reloadLibrary();
     if(event.target.closest('[data-import-guest]')&&accountId&&ready){
       for(const [id,e]of Object.entries(guest.entries))if(!saved[id])saved[id]=deepCopy(e);
@@ -99,6 +101,8 @@
   window.addEventListener('sahne:auth',onAuth);
   window.addEventListener('sahne:account-library',()=>reloadLibrary());
   window.SahneCommunity.install({mount:$('#community-root'),getShow,searchShows,openDetail:async(id)=>{if(!getShow(id)){await loadCatalogIndex();getShow(id);}openDetail(Number(id));},toast,getLibrary,applyLibrary,navigate,beforeSignOut:flush,beforeAccountWrite:async()=>{await flush();if(!ready||!accountId)throw Error('Hesap arşivin henüz hazır değil. Arşiv bölümünden yeniden bağlan.');}});
-  window.SahneCommunity.init().then(()=>{onAuth();if(state.view==='community')window.SahneOpenCommunity(state.communityView,state.communityId);}).catch(()=>updateAccount());
+  function openAuthRoute(){const mode=location.hash==='#sahne/kayit'?'signup':location.hash==='#sahne/giris'?'login':null;if(mode){if(user())navigate('profile',user().username);else window.SahneCommunity.authDialog(mode);}}
+  window.addEventListener('hashchange',openAuthRoute);
+  window.SahneCommunity.init().then(()=>{onAuth();if(state.view==='community')window.SahneOpenCommunity(state.communityView,state.communityId);}).catch(()=>updateAccount()).finally(openAuthRoute);
   updateAccount();
 })();
