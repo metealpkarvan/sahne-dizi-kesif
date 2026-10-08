@@ -16,11 +16,12 @@
 .series-grid .card{min-width:0;display:flex;flex-direction:column}
 .card-details{display:flex;flex-direction:column;min-width:0;flex:1}
 .series-grid .card .card-title{line-height:1.4;height:2.8em;margin:12px 0 6px;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
-.series-grid .card .card-meta{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;height:3em;line-height:1.5;overflow:hidden}
-.series-grid .card .card-meta span{margin-inline:4px}
+.card-details>*{flex-shrink:0}
+.series-grid .card .card-meta{display:grid;grid-template-rows:repeat(2,1.5em);gap:0;height:3em;line-height:1.5;overflow:hidden}
+.series-grid .card .card-meta-line,.series-grid .card .card-runtime{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .series-grid .card .card-provider{height:1.5em;line-height:1.5;overflow:hidden;margin-top:6px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1}
 .series-grid .card .catalog-meta-badge{height:1.5em;line-height:1.5;margin-top:5px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:start}
-.series-grid .card .catalog-meta-badge>span:first-child{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.series-grid .card .catalog-meta-badge>span:first-child{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .series-grid .card .catalog-meta-badge>span+span{white-space:nowrap}
 .series-grid .card .rating-controls{margin-top:10px;gap:6px}
 .series-grid .card .stars-preview:empty{display:none}
@@ -33,7 +34,7 @@
 @media(max-width:760px){
   .rating-controls .rating-button{width:42px;height:42px;min-height:42px;flex-basis:42px}
   .compact-home .ranking-card .rating-controls .rating-button,.ranking-card .rating-controls .rating-button{width:42px;height:42px;min-height:42px;flex-basis:42px}
-  .series-grid .card .card-meta{font-size:11px}
+  .series-grid .card .card-meta{font-size:12px}
   .series-grid .card .catalog-meta-badge{font-size:10px}
   .series-grid .card .rating-controls{width:100%;max-width:138px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
   .series-grid .card .rating-controls .rating-button{width:100%;height:auto;aspect-ratio:1;min-height:0}
