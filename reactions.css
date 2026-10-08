@@ -4,6 +4,7 @@
 .rating-controls .rating-button .rate-label{display:none}
 .rating-controls .rating-button:focus-visible .rate-label{display:none}
 .rating-controls .rating-button .rate-icon svg{width:18px;height:18px}
+.rating-controls .rating-button[data-value="love"] .rate-icon svg{width:26px;height:18px}
 .rating-button:after{content:attr(data-rating-label);position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);background:#edf0e9;color:#111;white-space:nowrap;font:500 12px var(--sans);padding:6px 9px;border-radius:6px;opacity:0;visibility:hidden;pointer-events:none;z-index:5}
 .rating-button:first-child:after{left:0;transform:none}
 .rating-button:last-child:after{left:auto;right:0;transform:none}
