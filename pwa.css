@@ -1,0 +1,23 @@
+/* Edge-to-edge iPhone layout, with room for the sensor housing and home indicator. */
+:root{
+  --sahne-safe-top:env(safe-area-inset-top,0px);
+  --sahne-safe-bottom:env(safe-area-inset-bottom,0px);
+  --sahne-header-height:78px;
+  --sahne-page-offset:130px;
+}
+.header{
+  height:calc(var(--sahne-header-height) + var(--sahne-safe-top));
+  padding-top:var(--sahne-safe-top);
+  padding-left:max(4.5%,env(safe-area-inset-left,0px));
+  padding-right:max(4.5%,env(safe-area-inset-right,0px));
+}
+#main{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+body{padding-bottom:var(--sahne-safe-bottom)}
+.compact-home{padding-top:calc(var(--sahne-header-height) + var(--sahne-safe-top))}
+.page-view{padding-top:calc(var(--sahne-page-offset) + var(--sahne-safe-top))}
+#platforms-view{padding-top:var(--sahne-safe-top)}
+html{scroll-padding-top:calc(var(--sahne-header-height) + var(--sahne-safe-top) + 16px)}
+.detail-dialog,.small-dialog{max-height:min(95dvh,calc(100dvh - var(--sahne-safe-top) - var(--sahne-safe-bottom) - 20px))}
+.sc-dialog{max-height:calc(100dvh - var(--sahne-safe-top) - var(--sahne-safe-bottom) - 40px)}
+#toast{bottom:calc(25px + var(--sahne-safe-bottom))}
+@media(max-width:760px){:root{--sahne-header-height:106px;--sahne-page-offset:114px}}

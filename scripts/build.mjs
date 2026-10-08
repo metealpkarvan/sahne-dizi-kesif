@@ -7,8 +7,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'dist');
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
-const files = (await readdir(root)).filter(name => /\.(html|css|js)$/.test(name));
-for (const name of [...files, 'assets', 'catalog', 'image-sources.json']) {
+const files = (await readdir(root)).filter(name => /\.(html|css|js|webmanifest)$/.test(name));
+for (const name of [...files, 'assets', 'catalog', 'image-sources.json', 'apple-touch-icon.png']) {
   await cp(path.join(root, name), path.join(output, name), { recursive: true });
 }
 let html = await readFile(path.join(output, 'index.html'), 'utf8');

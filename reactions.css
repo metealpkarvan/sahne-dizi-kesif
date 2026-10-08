@@ -1,0 +1,41 @@
+/* One compact reaction control everywhere, with a label on hover and keyboard focus. */
+.rating-controls{width:max-content;max-width:100%;gap:6px;flex:0 0 auto}
+.rating-controls .rating-button{position:relative;flex:0 1 38px;width:38px;height:38px;min-height:38px;padding:0;border-radius:50%;gap:0}
+.rating-controls .rating-button .rate-label{display:none}
+.rating-controls .rating-button:focus-visible .rate-label{display:none}
+.rating-controls .rating-button .rate-icon svg{width:18px;height:18px}
+.rating-button:after{content:attr(data-rating-label);position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);background:#edf0e9;color:#111;white-space:nowrap;font:500 12px var(--sans);padding:6px 9px;border-radius:6px;opacity:0;visibility:hidden;pointer-events:none;z-index:5}
+.rating-button:first-child:after{left:0;transform:none}
+.rating-button:last-child:after{left:auto;right:0;transform:none}
+.rating-button:focus-visible:after{opacity:1;visibility:visible}
+@media(hover:hover){.rating-button:hover:after{opacity:1;visibility:visible}}
+.detail-quick .rating-controls{flex:0 0 auto;max-width:100%;flex-basis:auto}
+.compact-home .ranking-card .rating-controls,.ranking-card .rating-controls{width:max-content;gap:5px}
+.compact-home .ranking-card .rating-controls .rating-button,.ranking-card .rating-controls .rating-button{width:32px;height:32px;min-height:32px;flex-basis:32px;padding:0}
+.series-grid .card{min-width:0;display:flex;flex-direction:column}
+.card-details{display:flex;flex-direction:column;min-width:0;flex:1}
+.series-grid .card .card-title{line-height:1.4;height:2.8em;margin:12px 0 6px;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.series-grid .card .card-meta{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;height:3em;line-height:1.5;overflow:hidden}
+.series-grid .card .card-meta span{margin-inline:4px}
+.series-grid .card .card-provider{height:1.5em;line-height:1.5;overflow:hidden;margin-top:6px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1}
+.series-grid .card .catalog-meta-badge{height:1.5em;line-height:1.5;margin-top:5px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:start}
+.series-grid .card .catalog-meta-badge>span:first-child{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.series-grid .card .catalog-meta-badge>span+span{white-space:nowrap}
+.series-grid .card .rating-controls{margin-top:10px;gap:6px}
+.series-grid .card .stars-preview:empty{display:none}
+.series-grid .card .stars-preview{height:22px;line-height:22px;margin-top:5px;overflow:hidden;white-space:nowrap;font-size:11px}
+#toast{margin:0;border:0;inset:auto;left:50%;bottom:calc(25px + var(--sahne-safe-bottom,0px));display:flex;align-items:center;gap:14px;width:max-content;max-width:calc(100vw - 32px);padding:12px 16px;line-height:1.5;z-index:1000}
+#toast[popover]:not(:popover-open){display:none}
+#toast.visible{pointer-events:auto}
+#toast button{padding:5px 0;background:none;color:inherit;font:700 13px var(--sans);text-decoration:underline;text-underline-offset:3px;white-space:nowrap;flex-shrink:0}
+#toast button:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+@media(max-width:760px){
+  .rating-controls .rating-button{width:42px;height:42px;min-height:42px;flex-basis:42px}
+  .compact-home .ranking-card .rating-controls .rating-button,.ranking-card .rating-controls .rating-button{width:42px;height:42px;min-height:42px;flex-basis:42px}
+  .series-grid .card .card-meta{font-size:11px}
+  .series-grid .card .catalog-meta-badge{font-size:10px}
+  .series-grid .card .rating-controls{width:100%;max-width:138px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .series-grid .card .rating-controls .rating-button{width:100%;height:auto;aspect-ratio:1;min-height:0}
+  #toast{font-size:12px;gap:12px;padding:10px 14px}
+}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}

@@ -12,7 +12,8 @@
     "test:watch": "node --test tests/watch.mjs tests/watch-ui.mjs",
     "test:media": "node --test tests/media.mjs tests/media-ui.mjs tests/trailer-preview.mjs",
     "test:navigation": "node --test tests/navigation.mjs tests/legacy-site.mjs",
-    "test:photos": "node --test tests/profile-images.mjs"
+    "test:photos": "node --test tests/profile-images.mjs",
+    "test:reactions": "node --test tests/reactions.mjs"
   },
   "engines": {
     "node": "24.x"

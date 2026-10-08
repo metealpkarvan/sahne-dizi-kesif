@@ -21,6 +21,7 @@ Türkçe dizi keşfi, sosyal izleme günlüğü ve dizi topluluğu. Canlı sür�
 - Masaüstü kartlarında kısa beklemeyle sessiz fragman önizlemesi; ses düğmesi, ayrıntıya geçiş ve fare ayrıldığında/ekran değiştiğinde temizleme. Mobilde ve azaltılmış hareket tercihinde otomatik önizleme yerine ayrıntıdaki fragman düğmesi kullanılır.
 - Dizi ayrıntısında gerçek sahne görselleri ve afişlerden oluşan mozaik; tam ekran görsel arşivi, küçük görseller, önceki/sonraki geçişi ve klavye desteği.
 - Mobil düzen, tarayıcı geçmişiyle geri dönüş ve azaltılmış hareket tercihine uyum.
+- iPhone ana ekranında **Sahne** adı ve özel ikon: `manifest.webmanifest`, Apple touch icon ve Safari çubukları olmadan açılan standalone görünüm. Çentik ve hareket çubuğu için güvenli alan boşlukları.
 
 ## Yerel çalıştırma ve doğrulama
 
@@ -78,3 +79,6 @@ Fragman önizlemesi iki yayın adresinde de kullanılır. Masaüstünde kart üz
 ## Tek güncel yayın
 
 Önceki `sahne-dizi-kesif.metealp.chatgpt.site` bağlantısı, dizi ve topluluk adresini koruyarak hesapların bulunduğu Vercel yayınına geçer. Kayıt: `#sahne/kayit`, giriş: `#sahne/giris`, forum: `#sahne/forum`. Üst menüde kayıt/giriş ve forum doğrudan görünür. Eski bağlantının `?legacy=1#sahne/arsiv` adresi önceki cihaz arşivini indirmek için korunur; yönlendirme yerel arşivi silmez veya başka adrese aktarmaz.
+
+- Beğeni kontrolleri yalnızca simge gösterir; fare veya klavye odağında etiket görünür. Bir tepki diziyi tamamlandı olarak arşive ekler ve yayınlanmış, tarihi bilinen bölümleri işaretler. Yedi saniyelik bildirimdeki Geri al, tercihi koruyarak önceki izleme durumunu ve bölüm ilerlemesini geri yükler. Gelecekteki bölümler işaretlenmez.
+- Katalog kartlarının başlık, bilgi, platform ve tepki alanları eşit yüksekliktedir; farklı metin uzunlukları mobil kartları kaydırmaz.

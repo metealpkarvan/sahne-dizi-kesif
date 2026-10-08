@@ -1,0 +1,18 @@
+{
+  "id": "/",
+  "name": "Sahne",
+  "short_name": "Sahne",
+  "description": "Dizi keşfi, izleme günlüğün ve aynı hikâyeleri seven insanlar.",
+  "lang": "tr-TR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#090a0b",
+  "theme_color": "#090a0b",
+  "categories": ["entertainment", "social"],
+  "icons": [
+    { "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
