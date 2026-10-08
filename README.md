@@ -82,3 +82,5 @@ Fragman önizlemesi iki yayın adresinde de kullanılır. Masaüstünde kart üz
 
 - Beğeni kontrolleri yalnızca simge gösterir; fare veya klavye odağında etiket görünür. Bir tepki diziyi tamamlandı olarak arşive ekler ve yayınlanmış, tarihi bilinen bölümleri işaretler. Yedi saniyelik bildirimdeki Geri al, tercihi koruyarak önceki izleme durumunu ve bölüm ilerlemesini geri yükler. Gelecekteki bölümler işaretlenmez.
 - Katalog kartlarının başlık, bilgi, platform ve tepki alanları eşit yüksekliktedir; farklı metin uzunlukları mobil kartları kaydırmaz.
+
+- Dizi ayrıntılarında ortak tür ve temalara göre en fazla sekiz benzer dizi sunulur. Benzer diziler sekmesi seçkiye doğrudan erişir; posterler yeni dizi ayrıntısını açar ve tarayıcı geri düğmesi önceki diziye döner. Büyük katalog önce metaveriden daraltılır; yalnızca gösterilecek başlıklar oluşturulur.

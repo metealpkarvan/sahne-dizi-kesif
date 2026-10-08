@@ -95,6 +95,18 @@ const TasteEngine = (() => {
     return .45*genre+.39*topic+.06*mood+.05*runtime+.03*language+.02*year;
   }
   function similarity(a,b,catalog){return sim(a,b,getModel(catalog));}
+  function related(source,items,catalog=items,limit=8){
+    const m=getModel(catalog),anchor=features(source),seen=new Set([source.id]),rows=[];
+    for(const s of items){
+      if(seen.has(s.id))continue;seen.add(s.id);
+      const candidate=features(s),genres=[...candidate.genres].filter(g=>anchor.genres.has(g));
+      const topics=[...candidate.topics].filter(t=>anchor.topics.has(t));
+      if(!genres.length&&!topics.length)continue;
+      const affinity=sim(source,s,m),typePenalty=source.type&&s.type&&source.type!==s.type ? 0.08 : 0;
+      rows.push({show:s,genres,themes:topics.map(t=>themeNames[t]||t),affinity,score:.9*affinity+.1*quality(s)-typePenalty});
+    }
+    return rows.sort((a,b)=>b.score-a.score||quality(b.show)-quality(a.show)||a.show.id-b.show.id).slice(0,Math.max(0,Math.min(12,limit)));
+  }
   function quality(s){return .65*Math.min(1,Math.max(0,(Number(s.rating)||6.3)/10))+.35*Math.min(1,Math.log1p(Number(s.weight)||0)/Math.log(101));}
   function profile(catalog,ratings,saved={}){
     const values=effectiveRatings(ratings,saved),positive=[],negative=[];
@@ -130,6 +142,6 @@ const TasteEngine = (() => {
     return {kind:p.negative.length?'avoid':p.positive.length?'explore':'editor'};
   }
   function insights(catalog,ratings,saved={}){const p=profile(catalog,ratings,saved),counts=new Map();for(const x of p.positive)for(const g of x.s.genres||[])counts.set(g,(counts.get(g)||0)+x.w);return {count:p.positive.length+p.negative.length,positive:p.positive.length,negative:p.negative.length,genres:[...counts].sort((a,b)=>b[1]-a[1]).slice(0,4).map(x=>x[0])};}
-  return {weights,validRatings,similarity,score,rank,recommend,explanation,insights,invalidate};
+  return {weights,validRatings,similarity,related,score,rank,recommend,explanation,insights,invalidate};
 })();
 if(typeof module!=='undefined')module.exports=TasteEngine;
